@@ -48,19 +48,29 @@ const UploadPaper = () => {
       formData.append("year", values.year);
       formData.append("file", values.file);
       
-      // Use a more specific backend API endpoint
+      // API endpoint
       const response = await fetch("https://scot-exam-api.fly.dev/api/papers", {
         method: "POST",
         body: formData,
-        // No need to set Content-Type header as FormData sets it automatically
-        // CORS is handled by the backend
+        // Adding headers to explicitly handle CORS
+        headers: {
+          'Accept': 'application/json',
+          // Don't set Content-Type here, as browser will set it automatically with correct boundary for FormData
+        },
+      }).catch(error => {
+        // Network error handling
+        console.error("Network error:", error);
+        throw new Error("Network error: Could not connect to the server. Please check your internet connection and try again.");
       });
       
       if (!response.ok) {
-        throw new Error(`Failed to upload paper: ${response.statusText}`);
+        // Handle HTTP errors
+        const errorText = await response.text().catch(() => "Unknown error");
+        console.error("API error:", response.status, errorText);
+        throw new Error(`Server error: ${response.status} - ${errorText || response.statusText}`);
       }
       
-      const result = await response.json();
+      const result = await response.json().catch(() => ({ message: "Upload successful but couldn't parse response." }));
       
       toast.success("Paper uploaded successfully", {
         description: `${values.subject} (${values.year}) has been uploaded.`
@@ -71,7 +81,7 @@ const UploadPaper = () => {
     } catch (error) {
       console.error("Error uploading paper:", error);
       toast.error("Failed to upload paper", {
-        description: error instanceof Error ? error.message : "Unknown error occurred"
+        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again later."
       });
     } finally {
       setIsUploading(false);
