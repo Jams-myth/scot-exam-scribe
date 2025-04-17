@@ -48,10 +48,12 @@ const UploadPaper = () => {
       formData.append("year", values.year);
       formData.append("file", values.file);
       
-      // Replace with your actual backend API endpoint
-      const response = await fetch("https://your-backend-api.com/papers", {
+      // Use a more specific backend API endpoint
+      const response = await fetch("https://scot-exam-api.fly.dev/api/papers", {
         method: "POST",
         body: formData,
+        // No need to set Content-Type header as FormData sets it automatically
+        // CORS is handled by the backend
       });
       
       if (!response.ok) {
