@@ -7,6 +7,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import UploadPaper from "./pages/UploadPaper";
+import ExamBrowser from "./pages/ExamBrowser";
+import ExamViewer from "./pages/ExamViewer";
+import MainNav from "./components/MainNav";
 
 const queryClient = new QueryClient();
 
@@ -16,12 +19,17 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/upload" element={<UploadPaper />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <MainNav />
+        <main className="min-h-[calc(100vh-64px)]">
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/upload" element={<UploadPaper />} />
+            <Route path="/exams" element={<ExamBrowser />} />
+            <Route path="/exam/:examId" element={<ExamViewer />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
