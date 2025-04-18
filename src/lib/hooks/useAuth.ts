@@ -18,6 +18,9 @@ export const useAuth = () => {
       const token = localStorage.getItem(TOKEN_KEY);
       const isValid = !!token;
       console.log('Auth check - Token exists:', isValid);
+      if (token) {
+        console.log('Token format check:', token.substring(0, 15) + '...');
+      }
       setIsAuthenticated(isValid);
     };
     
@@ -38,8 +41,15 @@ export const useAuth = () => {
   }, [location.pathname]);
 
   const login = (token: string) => {
-    console.log('Setting auth token:', token.substring(0, 10) + '...');
-    localStorage.setItem(TOKEN_KEY, token);
+    // Ensure token format is correct - should it have 'Bearer ' prefix?
+    let finalToken = token;
+    if (token.startsWith('Bearer ')) {
+      console.log('Token already has Bearer prefix, storing without it');
+      finalToken = token.substring(7); // Remove Bearer prefix for storage
+    }
+    
+    console.log('Setting auth token:', finalToken.substring(0, 10) + '...');
+    localStorage.setItem(TOKEN_KEY, finalToken);
     setIsAuthenticated(true);
     
     // Check if there's a redirect path stored

@@ -41,8 +41,14 @@ const Login = () => {
       // In a real app, this would come from a backend authentication endpoint
       if (username === 'admin' && password === 'password') {
         console.log('Login successful');
-        // Use a token format that matches what your backend expects
-        login('dummy-auth-token-for-admin-user');
+        
+        // Create token in the format expected by the backend
+        // For debugging and troubleshooting
+        const token = `dummy-auth-token-for-${username}-user`;
+        console.log(`Generated token: ${token.substring(0, 10)}...`);
+        
+        // Call login function from useAuth
+        login(token);
       } else {
         console.log('Invalid credentials');
         toast.error('Invalid credentials');

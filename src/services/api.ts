@@ -2,10 +2,19 @@
 import { Paper, ParsedQuestion, UploadResponse, ApiResponse } from "@/types/exam";
 
 // Change this to point to your actual backend API
-const API_URL = "https://exam-vault-api.onrender.com/api/v1";
+const API_URL = "https://preview--exam-vault-api.lovable.app";
 
-export const getAuthToken = () => localStorage.getItem('authToken');
-export const isAuthenticated = () => !!getAuthToken();
+export const getAuthToken = () => {
+  const token = localStorage.getItem('authToken');
+  console.log('Getting auth token:', token ? `${token.substring(0, 10)}...` : 'null');
+  return token;
+};
+
+export const isAuthenticated = () => {
+  const isAuth = !!getAuthToken();
+  console.log('isAuthenticated check:', isAuth);
+  return isAuth;
+};
 
 export const uploadPaper = async (file: File): Promise<UploadResponse> => {
   const formData = new FormData();
@@ -17,30 +26,49 @@ export const uploadPaper = async (file: File): Promise<UploadResponse> => {
   }
   
   try {
-    console.log('Uploading with token:', token); // Debug log for token
+    console.log('Upload API URL:', `${API_URL}/papers/pdf`);
+    console.log('Auth header being sent:', `Bearer ${token.substring(0, 10)}...`);
+    
+    // Log all headers for debugging
+    const headers: Record<string, string> = {
+      'Authorization': `Bearer ${token}`
+    };
+    console.log('Request headers:', JSON.stringify(headers));
     
     const response = await fetch(`${API_URL}/papers/pdf`, {
       method: "POST",
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
+      headers: headers,
       body: formData,
+      credentials: 'include', // Include cookies if they're used for auth
     });
     
-    console.log('Upload response status:', response.status); // Debug log for response
+    console.log('Upload response status:', response.status);
+    console.log('Upload response headers:', JSON.stringify(Object.fromEntries([...response.headers.entries()])));
     
     if (!response.ok) {
+      // Try to get detailed error info
+      let errorDetail = '';
+      try {
+        const errorText = await response.text();
+        console.error('Error response body:', errorText);
+        try {
+          const errorJson = JSON.parse(errorText);
+          errorDetail = errorJson.detail || errorJson.message || errorText;
+        } catch (e) {
+          errorDetail = errorText;
+        }
+      } catch (e) {
+        errorDetail = 'Could not read error details';
+      }
+      
       if (response.status === 401) {
         throw new Error("Unauthorized: Please login to upload papers");
       } else if (response.status === 403) {
-        const errorText = await response.text();
-        console.error('Forbidden response details:', errorText);
-        throw new Error("Forbidden: You don't have permission to upload papers");
+        throw new Error(`Forbidden: ${errorDetail || "You don't have permission to upload papers"}`);
       } else if (response.status === 500) {
-        throw new Error("Server error: The upload could not be processed");
+        throw new Error(`Server error: ${errorDetail || "The upload could not be processed"}`);
       } else {
-        const errorText = await response.text();
-        throw new Error(`Upload failed (${response.status}): ${errorText}`);
+        throw new Error(`Upload failed (${response.status}): ${errorDetail}`);
       }
     }
     

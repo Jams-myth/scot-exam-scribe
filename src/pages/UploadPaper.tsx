@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { uploadPaper, savePaper, saveQuestions } from "@/services/api";
+import { uploadPaper, savePaper, saveQuestions, getAuthToken } from "@/services/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,10 +19,13 @@ const UploadPaper = () => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [parsedData, setParsedData] = useState<any | null>(null);
+  const [debugInfo, setDebugInfo] = useState<string>('');
 
   // Check authentication on component mount
   useEffect(() => {
     console.log('UploadPaper - Auth check:', isAuthenticated);
+    console.log('Current token:', getAuthToken() ? 'Token exists' : 'No token');
+    
     if (!isAuthenticated) {
       console.log('Not authenticated, redirecting to login');
       redirectToLogin(location.pathname);
@@ -42,6 +45,11 @@ const UploadPaper = () => {
     }
   };
 
+  // Function to add debug info to the state
+  const addDebugInfo = (info: string) => {
+    setDebugInfo(prev => `${prev}\n${new Date().toISOString()}: ${info}`);
+  };
+
   const handleUpload = async () => {
     if (!file) {
       console.log('No file selected');
@@ -56,20 +64,33 @@ const UploadPaper = () => {
     
     setUploading(true);
     setError(null);
+    addDebugInfo('Starting file upload');
     console.log('Starting file upload');
+    
+    // Verify token before upload
+    const token = getAuthToken();
+    addDebugInfo(`Token exists: ${!!token}`);
+    if (token) {
+      addDebugInfo(`Token format: ${token.substring(0, 10)}...`);
+    }
 
     try {
       // Use the uploadPaper API function from services/api.ts
+      addDebugInfo('Calling uploadPaper API');
       const result = await uploadPaper(file);
       console.log('Upload successful, parsed data received:', result);
+      addDebugInfo('Upload successful');
       
       // Set the parsed data from the API response
       setParsedData(result);
       toast.success("Paper uploaded successfully");
     } catch (err: any) {
       console.error('Upload error:', err);
+      addDebugInfo(`Upload error: ${err.message}`);
+      
       if (err.message === "Unauthorized: Please login to upload papers") {
         console.log('Unauthorized, redirecting to login');
+        addDebugInfo('Unauthorized, redirecting to login');
         redirectToLogin(location.pathname);
       } else {
         setError(err.message || "Upload failed.");
@@ -172,6 +193,12 @@ const UploadPaper = () => {
       </div>
 
       {error && <Alert variant="destructive">{error}</Alert>}
+      
+      {/* Debug information section */}
+      <div className="mt-4 p-2 bg-gray-100 rounded text-xs font-mono overflow-auto max-h-40">
+        <p className="font-bold">Debug Info:</p>
+        <pre>{debugInfo || 'No debug info yet'}</pre>
+      </div>
 
       {parsedData && (
         <div className="space-y-2">
