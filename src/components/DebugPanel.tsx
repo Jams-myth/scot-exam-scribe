@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Bug, Trash2, ChevronDown, ChevronUp, RefreshCcw } from 'lucide-react';
+import { Bug, Trash2, ChevronDown, ChevronUp, RefreshCcw, Download } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { API_URL } from '@/services/api';
@@ -23,14 +22,6 @@ const DebugPanel = ({
   onToggleDebug,
 }: DebugPanelProps) => {
   const [showNetworkDetails, setShowNetworkDetails] = useState(false);
-
-  if (!showDebug) {
-    return (
-      <Button variant="outline" size="icon" onClick={onToggleDebug} title="Toggle Debug Info">
-        <Bug className="h-4 w-4" />
-      </Button>
-    );
-  }
 
   const testConnection = async () => {
     try {
@@ -61,11 +52,41 @@ const DebugPanel = ({
     }
   };
 
+  const exportLogs = () => {
+    const logContent = `Debug Information Export
+Timestamp: ${new Date().toISOString()}
+API URL: ${API_URL}
+Last Network Request: ${JSON.stringify(lastNetworkRequest, null, 2)}
+Debug Log:
+${debugInfo}`;
+
+    const blob = new Blob([logContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `debug-logs-${new Date().toISOString()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  if (!showDebug) {
+    return (
+      <Button variant="outline" size="icon" onClick={onToggleDebug} title="Toggle Debug Info">
+        <Bug className="h-4 w-4" />
+      </Button>
+    );
+  }
+
   return (
     <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono overflow-auto max-h-80 border border-gray-300 dark:border-gray-700">
       <div className="flex justify-between items-center mb-2">
         <p className="font-bold">Debug Information:</p>
         <div className="flex gap-2">
+          <Button variant="ghost" size="sm" onClick={exportLogs}>
+            <Download className="h-3 w-3 mr-1" /> Export Logs
+          </Button>
           <Button variant="ghost" size="sm" onClick={onClearDebug}>
             Clear Log
           </Button>

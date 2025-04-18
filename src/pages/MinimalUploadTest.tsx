@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,6 @@ const MinimalUploadTest = () => {
   const [status, setStatus] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   
-  // Get token once on mount
   useEffect(() => {
     const storedToken = localStorage.getItem('authToken');
     setToken(storedToken);
@@ -23,7 +21,6 @@ const MinimalUploadTest = () => {
       console.log('Token format:', storedToken.substring(0, 20) + '...');
       
       try {
-        // Decode JWT token if it's valid
         const parts = storedToken.split('.');
         if (parts.length === 3) {
           const payload = JSON.parse(atob(parts[1]));
@@ -65,10 +62,8 @@ const MinimalUploadTest = () => {
     const formData = new FormData();
     formData.append("file", file);
     
-    // Ensure token has correct Bearer format
     const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
     
-    // Log detailed request information
     console.log('========== DIRECT FETCH TEST ==========');
     console.log('API URL:', API_URL);
     console.log('Endpoint:', '/papers/pdf');
@@ -82,7 +77,6 @@ const MinimalUploadTest = () => {
     });
     
     try {
-      // Make a direct fetch request with minimal configuration
       const response = await fetch(`${API_URL}/papers/pdf`, {
         method: 'POST',
         headers: {
@@ -91,7 +85,6 @@ const MinimalUploadTest = () => {
         body: formData,
       });
       
-      // Log response details
       console.log('Response status:', response.status, response.statusText);
       console.log('Response headers:', Object.fromEntries([...response.headers.entries()]));
       
@@ -100,7 +93,6 @@ const MinimalUploadTest = () => {
         console.log('Response data:', data);
         setStatus(`Success! Status: ${response.status} ${response.statusText}`);
       } else {
-        // Get detailed error information
         const errorText = await response.text();
         console.error('Error response body:', errorText);
         setStatus(`Failed with status: ${response.status} ${response.statusText}`);
@@ -109,15 +101,12 @@ const MinimalUploadTest = () => {
           const errorJson = JSON.parse(errorText);
           console.error('Parsed error:', errorJson);
         } catch (e) {
-          // Not JSON, just log the text
           console.error('Raw error text:', errorText);
         }
       }
     } catch (error: any) {
-      // Detailed error logging
       console.error('Fetch error:', error);
       
-      // Detect network errors vs CORS issues
       if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
         const errorMessage = `Network error: Could not connect to API server at ${API_URL}. This could be due to:
         1. The API server is down or unreachable
@@ -133,13 +122,11 @@ const MinimalUploadTest = () => {
       setUploading(false);
     }
   };
-  
-  // Function to manually test CORS with OPTIONS request
+
   const testCORS = async () => {
     setStatus('Testing CORS (OPTIONS request)...');
     
     try {
-      // Make an OPTIONS request to check CORS configuration
       const response = await fetch(`${API_URL}/health`, {
         method: 'OPTIONS',
         headers: {
@@ -173,6 +160,39 @@ const MinimalUploadTest = () => {
     }
   };
 
+  const checkAPIStatus = async () => {
+    setStatus('Checking API status...');
+    
+    try {
+      const response = await fetch(`${API_URL}/status`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      console.log('API Status Check:', {
+        url: `${API_URL}/status`,
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries([...response.headers.entries()]),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('API Status Response:', data);
+        setStatus(`API is reachable! Response: ${JSON.stringify(data)}`);
+      } else {
+        const errorText = await response.text();
+        console.error('API Status Error:', errorText);
+        setStatus(`API check failed: ${response.status} ${response.statusText}`);
+      }
+    } catch (error: any) {
+      console.error('API Status Check Error:', error);
+      setStatus(`API check error: ${error.message}`);
+    }
+  };
+
   return (
     <Card className="p-6 max-w-xl mx-auto mt-8 space-y-4">
       <h1 className="text-2xl font-bold">Minimal Upload Test</h1>
@@ -196,6 +216,17 @@ const MinimalUploadTest = () => {
               API URL: {API_URL}
             </AlertDescription>
           </Alert>
+        </div>
+
+        <div className="space-y-2">
+          <h2 className="text-lg font-semibold">API Connectivity Test</h2>
+          <Button 
+            onClick={checkAPIStatus}
+            variant="secondary"
+            className="mb-2"
+          >
+            Check API Reachability
+          </Button>
         </div>
 
         <div className="space-y-2">
@@ -224,7 +255,7 @@ const MinimalUploadTest = () => {
         </div>
         
         {status && (
-          <Alert variant={status.includes('Success') ? "default" : "destructive"}>
+          <Alert variant={status.includes('Success') || status.includes('reachable') ? "default" : "destructive"}>
             <AlertDescription>
               {status}
             </AlertDescription>
