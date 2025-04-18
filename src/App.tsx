@@ -16,11 +16,19 @@ import { useAuth } from "@/lib/hooks/useAuth";
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const { isAuthenticated, redirectToLogin } = useAuth();
+  const { isAuthenticated, isLoading, redirectToLogin } = useAuth();
   const location = useLocation();
   
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+      </div>
+    );
+  }
+  
   if (!isAuthenticated) {
-    // Store the path the user was trying to access
     redirectToLogin(location.pathname);
     return null;
   }

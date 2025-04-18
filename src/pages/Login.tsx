@@ -10,11 +10,11 @@ import { useAuth } from '@/lib/hooks/useAuth';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, isLoading } = useAuth();
+  const [showDebug, setShowDebug] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Extract redirect path from query params
   const getRedirectPath = () => {
     const urlParams = new URLSearchParams(location.search);
     const redirectPath = urlParams.get('redirect') || localStorage.getItem('redirectAfterLogin') || '/';
@@ -22,33 +22,24 @@ const Login = () => {
     return redirectPath;
   };
 
-  // Check for redirect param in URL or localStorage
   useEffect(() => {
-    // If already authenticated, redirect
-    if (isAuthenticated) {
+    if (!isLoading && isAuthenticated) {
       const redirectPath = getRedirectPath();
       console.log('Already authenticated, redirecting to:', redirectPath);
       navigate(redirectPath, { replace: true });
     }
-  }, [isAuthenticated, navigate, location]);
+  }, [isAuthenticated, isLoading, navigate, location]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Login attempt for user:', username);
     
     try {
-      // Use the same dummy token that the backend expects
-      // In a real app, this would come from a backend authentication endpoint
       if (username === 'admin' && password === 'password') {
         console.log('Login successful');
-        
-        // Create token in the format expected by the backend
-        // For debugging and troubleshooting
         const token = `dummy-auth-token-for-${username}-user`;
         console.log(`Generated token: ${token.substring(0, 10)}...`);
-        
-        // Call login function from useAuth
-        login(token);
+        await login(token);
       } else {
         console.log('Invalid credentials');
         toast.error('Invalid credentials');
@@ -59,8 +50,10 @@ const Login = () => {
     }
   };
 
+  const toggleDebug = () => setShowDebug(!showDebug);
+
   return (
-    <div className="flex justify-center items-center min-h-screen">
+    <div className="flex flex-col items-center min-h-screen p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Login to Exam Vault</CardTitle>
@@ -87,12 +80,35 @@ const Login = () => {
                 required 
               />
             </div>
-            <Button type="submit" className="w-full">
-              Login
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? 'Loading...' : 'Login'}
             </Button>
           </form>
         </CardContent>
       </Card>
+
+      <Button
+        variant="ghost"
+        className="mt-4"
+        onClick={toggleDebug}
+      >
+        {showDebug ? 'Hide' : 'Show'} Debug Info
+      </Button>
+
+      {showDebug && (
+        <Card className="w-full max-w-md mt-4 p-4">
+          <pre className="text-xs whitespace-pre-wrap">
+            {JSON.stringify({
+              isAuthenticated,
+              isLoading,
+              redirectPath: getRedirectPath(),
+              currentPath: location.pathname,
+              hasToken: !!localStorage.getItem('authToken'),
+              timestamp: new Date().toISOString()
+            }, null, 2)}
+          </pre>
+        </Card>
+      )}
     </div>
   );
 };
