@@ -1,12 +1,12 @@
 
 import { Paper, ParsedQuestion, UploadResponse, ApiResponse } from "@/types/exam";
 
-// Change this to point to your actual backend API
-const API_URL = "https://preview--exam-vault-api.lovable.app";
+// API base URL
+export const API_URL = "https://preview--exam-vault-api.lovable.app";
 
 export const getAuthToken = () => {
   const token = localStorage.getItem('authToken');
-  console.log('Getting auth token:', token ? `${token.substring(0, 10)}...` : 'null');
+  console.log('Getting auth token:', token ? `${token.substring(0, 15)}...` : 'null');
   return token;
 };
 
@@ -26,27 +26,32 @@ export const uploadPaper = async (file: File): Promise<UploadResponse> => {
   }
   
   try {
-    console.log('Upload API URL:', `${API_URL}/papers/pdf`);
-    console.log('Auth header being sent:', `Bearer ${token.substring(0, 10)}...`);
+    // Log upload attempt details
+    const uploadUrl = `${API_URL}/papers/pdf`;
+    console.log('Upload API URL:', uploadUrl);
+    console.log('Auth token format check:', token.substring(0, 15) + '...');
     
-    // Log all headers for debugging
+    // Log request headers for debugging
     const headers: Record<string, string> = {
-      'Authorization': `Bearer ${token}`
+      'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`
     };
     console.log('Request headers:', JSON.stringify(headers));
     
-    const response = await fetch(`${API_URL}/papers/pdf`, {
+    // Make the request with proper error handling
+    const response = await fetch(uploadUrl, {
       method: "POST",
       headers: headers,
       body: formData,
       credentials: 'include', // Include cookies if they're used for auth
     });
     
+    // Log the response details for debugging
     console.log('Upload response status:', response.status);
-    console.log('Upload response headers:', JSON.stringify(Object.fromEntries([...response.headers.entries()])));
+    console.log('Upload response statusText:', response.statusText);
+    console.log('Response headers:', JSON.stringify(Object.fromEntries([...response.headers.entries()])));
     
     if (!response.ok) {
-      // Try to get detailed error info
+      // Get detailed error information
       let errorDetail = '';
       try {
         const errorText = await response.text();
@@ -61,21 +66,29 @@ export const uploadPaper = async (file: File): Promise<UploadResponse> => {
         errorDetail = 'Could not read error details';
       }
       
+      // Handle specific error cases
       if (response.status === 401) {
-        throw new Error("Unauthorized: Please login to upload papers");
+        throw new Error(`Unauthorized: Please login to upload papers (${errorDetail})`);
       } else if (response.status === 403) {
         throw new Error(`Forbidden: ${errorDetail || "You don't have permission to upload papers"}`);
       } else if (response.status === 500) {
         throw new Error(`Server error: ${errorDetail || "The upload could not be processed"}`);
       } else {
-        throw new Error(`Upload failed (${response.status}): ${errorDetail}`);
+        throw new Error(`Upload failed (${response.status}): ${errorDetail || response.statusText}`);
       }
     }
     
+    // Return the parsed JSON response
     return response.json();
   } catch (error: any) {
     // Log the error for debugging
     console.error("API Error in uploadPaper:", error);
+    
+    // If it's a network error, add more context
+    if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+      throw new Error("Network error: Could not connect to API server. Check your internet connection or if the server is running.");
+    }
+    
     throw error;
   }
 };

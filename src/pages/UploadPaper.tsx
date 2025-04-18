@@ -1,12 +1,11 @@
-
 import React, { useState, useEffect } from "react";
-import { uploadPaper, savePaper, saveQuestions, getAuthToken } from "@/services/api";
+import { uploadPaper, savePaper, saveQuestions, getAuthToken, API_URL } from "@/services/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
-import { FilePlus, RefreshCw } from "lucide-react";
+import { FilePlus, RefreshCw, Bug } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -19,12 +18,18 @@ const UploadPaper = () => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [parsedData, setParsedData] = useState<any | null>(null);
+  const [showDebug, setShowDebug] = useState(true);
   const [debugInfo, setDebugInfo] = useState<string>('');
 
-  // Check authentication on component mount
   useEffect(() => {
     console.log('UploadPaper - Auth check:', isAuthenticated);
-    console.log('Current token:', getAuthToken() ? 'Token exists' : 'No token');
+    const token = getAuthToken();
+    console.log('Current token:', token ? `${token.substring(0, 15)}...` : 'No token');
+    addDebugInfo(`Auth check: ${isAuthenticated ? 'Authenticated' : 'Not authenticated'}`);
+    addDebugInfo(`Token exists: ${!!token}`);
+    if (token) {
+      addDebugInfo(`Token format: ${token.substring(0, 15)}...`);
+    }
     
     if (!isAuthenticated) {
       console.log('Not authenticated, redirecting to login');
@@ -38,63 +43,67 @@ const UploadPaper = () => {
       setFile(selected);
       setError(null);
       console.log('File selected:', selected.name, 'Size:', selected.size);
+      addDebugInfo(`File selected: ${selected.name} (${(selected.size / 1024).toFixed(2)} KB)`);
     } else {
       setFile(null);
       setError("Please upload a valid PDF file under 10MB.");
       console.log('Invalid file selected');
+      addDebugInfo('Invalid file selected - must be PDF under 10MB');
     }
   };
 
-  // Function to add debug info to the state
   const addDebugInfo = (info: string) => {
-    setDebugInfo(prev => `${prev}\n${new Date().toISOString()}: ${info}`);
+    const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+    setDebugInfo(prev => `${prev}\n[${timestamp}] ${info}`);
   };
 
   const handleUpload = async () => {
     if (!file) {
       console.log('No file selected');
+      addDebugInfo('Error: No file selected');
       return;
     }
     
     if (!isAuthenticated) {
       console.log('Not authenticated, redirecting to login');
+      addDebugInfo('Error: Not authenticated, redirecting to login');
       redirectToLogin(location.pathname);
       return;
     }
     
     setUploading(true);
     setError(null);
-    addDebugInfo('Starting file upload');
+    addDebugInfo('Starting file upload process');
     console.log('Starting file upload');
     
-    // Verify token before upload
     const token = getAuthToken();
-    addDebugInfo(`Token exists: ${!!token}`);
+    addDebugInfo(`Token check before upload: ${!!token ? 'Present' : 'Missing'}`);
     if (token) {
-      addDebugInfo(`Token format: ${token.substring(0, 10)}...`);
+      addDebugInfo(`Token format: ${token.substring(0, 15)}...`);
     }
 
     try {
-      // Use the uploadPaper API function from services/api.ts
-      addDebugInfo('Calling uploadPaper API');
+      addDebugInfo(`API URL: ${API_URL}/papers/pdf`);
+      
+      addDebugInfo('Calling uploadPaper API...');
       const result = await uploadPaper(file);
       console.log('Upload successful, parsed data received:', result);
-      addDebugInfo('Upload successful');
+      addDebugInfo('Upload successful!');
       
-      // Set the parsed data from the API response
       setParsedData(result);
       toast.success("Paper uploaded successfully");
     } catch (err: any) {
       console.error('Upload error:', err);
-      addDebugInfo(`Upload error: ${err.message}`);
+      const errorMessage = err.message || "Upload failed.";
+      addDebugInfo(`Upload error: ${errorMessage}`);
       
-      if (err.message === "Unauthorized: Please login to upload papers") {
+      if (errorMessage.includes("Unauthorized") || errorMessage.includes("Authentication required")) {
         console.log('Unauthorized, redirecting to login');
         addDebugInfo('Unauthorized, redirecting to login');
         redirectToLogin(location.pathname);
       } else {
-        setError(err.message || "Upload failed.");
-        toast.error(err.message || "Upload failed");
+        setError(errorMessage);
+        toast.error(errorMessage);
       }
     } finally {
       setUploading(false);
@@ -115,7 +124,6 @@ const UploadPaper = () => {
 
     try {
       console.log('Saving paper with data:', parsedData);
-      // Create paper object with all required fields
       const paperData = {
         title: parsedData.title,
         subject: parsedData.subject,
@@ -126,16 +134,14 @@ const UploadPaper = () => {
         description: parsedData.description,
         time_limit_minutes: parsedData.time_limit_minutes,
         grade_level: parsedData.grade_level,
-        questions: [] // Empty array to satisfy type requirements
+        questions: []
       };
       
       const savedPaper = await savePaper(paperData);
       console.log('Paper saved successfully:', savedPaper);
 
-      // Access id from data property of the response
       const paperId = savedPaper.data.id;
       
-      // Map questions to match the expected format
       const formattedQuestions = parsedData.questions.map((q: any) => ({
         text: q.question_text || "",
         type: q.question_type || "Essay",
@@ -161,6 +167,10 @@ const UploadPaper = () => {
         toast.error(err.message || "Failed to save paper");
       }
     }
+  };
+
+  const toggleDebug = () => {
+    setShowDebug(!showDebug);
   };
 
   if (!isAuthenticated) {
@@ -190,15 +200,36 @@ const UploadPaper = () => {
             {!isAuthenticated && <TooltipContent>Login required</TooltipContent>}
           </Tooltip>
         </TooltipProvider>
+        
+        <Button variant="outline" size="icon" onClick={toggleDebug} title="Toggle Debug Info">
+          <Bug className="h-4 w-4" />
+        </Button>
       </div>
 
       {error && <Alert variant="destructive">{error}</Alert>}
       
-      {/* Debug information section */}
-      <div className="mt-4 p-2 bg-gray-100 rounded text-xs font-mono overflow-auto max-h-40">
-        <p className="font-bold">Debug Info:</p>
-        <pre>{debugInfo || 'No debug info yet'}</pre>
-      </div>
+      {showDebug && (
+        <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono overflow-auto max-h-60 border border-gray-300 dark:border-gray-700">
+          <div className="flex justify-between items-center mb-2">
+            <p className="font-bold">Debug Information:</p>
+            <Button variant="ghost" size="sm" onClick={() => setDebugInfo('')}>
+              Clear
+            </Button>
+          </div>
+          <div className="space-y-1 mb-2">
+            <p><strong>API URL:</strong> {API_URL}</p>
+            <p><strong>Auth Status:</strong> {isAuthenticated ? 'Authenticated' : 'Not authenticated'}</p>
+            <p><strong>Token Present:</strong> {getAuthToken() ? 'Yes' : 'No'}</p>
+            {getAuthToken() && (
+              <p>
+                <strong>Token Format:</strong> {getAuthToken()?.substring(0, 20)}...
+              </p>
+            )}
+          </div>
+          <p className="font-bold mt-2">Log:</p>
+          <pre className="whitespace-pre-wrap">{debugInfo || 'No log entries yet'}</pre>
+        </div>
+      )}
 
       {parsedData && (
         <div className="space-y-2">

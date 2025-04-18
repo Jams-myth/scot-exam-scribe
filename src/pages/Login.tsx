@@ -6,12 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { API_URL } from '@/services/api';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login, isAuthenticated, isLoading } = useAuth();
   const [showDebug, setShowDebug] = useState(false);
+  const [loginInProgress, setLoginInProgress] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -33,12 +35,28 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Login attempt for user:', username);
+    setLoginInProgress(true);
     
     try {
+      // For demo purposes, we'll still check for admin/password,
+      // but generate a more realistic JWT-like token
       if (username === 'admin' && password === 'password') {
         console.log('Login successful');
-        const token = `dummy-auth-token-for-${username}-user`;
-        console.log(`Generated token: ${token.substring(0, 10)}...`);
+        
+        // Create a more realistic looking JWT token (still for demo purposes)
+        // A real JWT has three parts separated by dots: header.payload.signature
+        const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+        const payload = btoa(JSON.stringify({ 
+          sub: username, 
+          name: "Admin User", 
+          role: "admin",
+          exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour expiration
+        }));
+        const signature = btoa("demo-signature"); // In a real JWT this would be cryptographically generated
+        
+        const token = `${header}.${payload}.${signature}`;
+        console.log(`Generated JWT-like token: ${token.substring(0, 15)}...`);
+        
         await login(token);
       } else {
         console.log('Invalid credentials');
@@ -47,6 +65,8 @@ const Login = () => {
     } catch (error) {
       console.error('Login error:', error);
       toast.error('Login failed');
+    } finally {
+      setLoginInProgress(false);
     }
   };
 
@@ -80,8 +100,8 @@ const Login = () => {
                 required 
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Loading...' : 'Login'}
+            <Button type="submit" className="w-full" disabled={isLoading || loginInProgress}>
+              {loginInProgress ? 'Logging in...' : isLoading ? 'Loading...' : 'Login'}
             </Button>
           </form>
         </CardContent>
@@ -103,7 +123,11 @@ const Login = () => {
               isLoading,
               redirectPath: getRedirectPath(),
               currentPath: location.pathname,
+              apiUrl: API_URL,
               hasToken: !!localStorage.getItem('authToken'),
+              tokenPreview: localStorage.getItem('authToken') 
+                ? `${localStorage.getItem('authToken')?.substring(0, 15)}...` 
+                : 'none',
               timestamp: new Date().toISOString()
             }, null, 2)}
           </pre>
