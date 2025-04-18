@@ -11,6 +11,7 @@ import ExamBrowser from "./pages/ExamBrowser";
 import ExamViewer from "./pages/ExamViewer";
 import MainNav from "./components/MainNav";
 import Login from "./pages/Login";
+import MinimalUploadTest from "./pages/MinimalUploadTest";
 import { useAuth } from "@/lib/hooks/useAuth";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,14 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute>
                 <UploadPaper />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/upload-test"
+            element={
+              <ProtectedRoute>
+                <MinimalUploadTest />
               </ProtectedRoute>
             }
           />
