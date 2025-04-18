@@ -4,19 +4,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
-import { Upload, FileUp, Loader2 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Upload, FileUp, Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-// Define the form schema with zod
+// Define form schema with validation rules
 const formSchema = z.object({
-  subject: z.string().min(2, { message: "Subject must be at least 2 characters" }),
-  year: z.string()
-    .refine((val) => !isNaN(parseInt(val)), { message: "Year must be a number" })
-    .refine((val) => parseInt(val) > 1990 && parseInt(val) <= new Date().getFullYear(), 
-      { message: `Year must be between 1991 and ${new Date().getFullYear()}` }),
   file: z.instanceof(File).refine((file) => file.size <= 10000000, {
     message: "File size must be less than 10MB",
   }).refine((file) => ["application/pdf"].includes(file.type), {
@@ -26,108 +22,82 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+interface ParsedQuestion {
+  id: string;
+  text: string;
+  options?: string[];
+  correctAnswer: string;
+}
+
+interface UploadResponse {
+  success: boolean;
+  questions: ParsedQuestion[];
+  error?: string;
+}
+
 const UploadPaper = () => {
   const [isUploading, setIsUploading] = useState(false);
+  const [parsedQuestions, setParsedQuestions] = useState<ParsedQuestion[] | null>(null);
   
   // Initialize the form
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      subject: "",
-      year: new Date().getFullYear().toString(),
-    },
   });
 
   const onSubmit = async (values: FormValues) => {
     setIsUploading(true);
+    setParsedQuestions(null);
     
     try {
-      // Create a FormData object to send the file
+      // Create FormData object
       const formData = new FormData();
-      formData.append("subject", values.subject);
-      formData.append("year", values.year);
       formData.append("file", values.file);
       
-      // API endpoint
-      const response = await fetch("https://scot-exam-api.fly.dev/api/papers", {
+      const response = await fetch("https://exam-vault-api.onrender.com/api/v1/upload", {
         method: "POST",
         body: formData,
-        // Adding headers to explicitly handle CORS
-        headers: {
-          'Accept': 'application/json',
-          // Don't set Content-Type here, as browser will set it automatically with correct boundary for FormData
-        },
-      }).catch(error => {
-        // Network error handling
-        console.error("Network error:", error);
-        throw new Error("Network error: Could not connect to the server. Please check your internet connection and try again.");
       });
       
       if (!response.ok) {
-        // Handle HTTP errors
-        const errorText = await response.text().catch(() => "Unknown error");
-        console.error("API error:", response.status, errorText);
+        const errorText = await response.text();
         throw new Error(`Server error: ${response.status} - ${errorText || response.statusText}`);
       }
       
-      const result = await response.json().catch(() => ({ message: "Upload successful but couldn't parse response." }));
+      const result: UploadResponse = await response.json();
       
-      toast.success("Paper uploaded successfully", {
-        description: `${values.subject} (${values.year}) has been uploaded.`
+      if (!result.success || !result.questions) {
+        throw new Error(result.error || "Failed to parse exam questions");
+      }
+      
+      setParsedQuestions(result.questions);
+      
+      toast.success("PDF uploaded and parsed successfully", {
+        description: `${result.questions.length} questions extracted`
       });
       
-      // Reset form
-      form.reset();
     } catch (error) {
-      console.error("Error uploading paper:", error);
-      toast.error("Failed to upload paper", {
-        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again later."
+      console.error("Error uploading PDF:", error);
+      toast.error("Failed to upload PDF", {
+        description: error instanceof Error ? error.message : "An unexpected error occurred"
       });
+      setParsedQuestions(null);
     } finally {
       setIsUploading(false);
     }
   };
 
   return (
-    <div className="container py-10 max-w-3xl mx-auto">
+    <div className="container py-10 max-w-4xl mx-auto">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Upload New Exam Paper</CardTitle>
+          <CardTitle className="text-2xl">Upload Exam Paper</CardTitle>
           <CardDescription>
-            Upload a Scottish National 5 exam paper in PDF format
+            Upload a PDF exam paper to extract questions automatically
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="subject"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Subject</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g. Mathematics, English, Biology" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="year"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Year</FormLabel>
-                    <FormControl>
-                      <Input type="number" min={1991} max={new Date().getFullYear()} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
               <FormField
                 control={form.control}
                 name="file"
@@ -177,17 +147,57 @@ const UploadPaper = () => {
                 {isUploading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Uploading...
+                    Processing PDF...
                   </>
                 ) : (
                   <>
                     <Upload className="mr-2 h-4 w-4" />
-                    Upload Exam Paper
+                    Upload and Parse Questions
                   </>
                 )}
               </Button>
             </form>
           </Form>
+
+          {parsedQuestions && parsedQuestions.length > 0 && (
+            <div className="mt-8 space-y-6">
+              <Alert>
+                <CheckCircle className="h-4 w-4" />
+                <AlertTitle>Questions Extracted Successfully</AlertTitle>
+                <AlertDescription>
+                  {parsedQuestions.length} questions were parsed from the PDF. Review them below.
+                </AlertDescription>
+              </Alert>
+              
+              <div className="space-y-4">
+                {parsedQuestions.map((question, index) => (
+                  <Card key={question.id}>
+                    <CardContent className="pt-6">
+                      <h3 className="font-semibold mb-2">Question {index + 1}</h3>
+                      <p className="text-sm mb-4">{question.text}</p>
+                      
+                      {question.options && (
+                        <div className="ml-4 space-y-2">
+                          {question.options.map((option, optIndex) => (
+                            <div key={optIndex} className="flex items-center gap-2">
+                              <span className="text-sm font-medium">{String.fromCharCode(65 + optIndex)}.</span>
+                              <span className="text-sm">{option}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      
+                      <div className="mt-4 pt-4 border-t">
+                        <p className="text-sm text-muted-foreground">
+                          <span className="font-medium">Correct Answer:</span> {question.correctAnswer}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
