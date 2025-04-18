@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,6 +46,8 @@ const UploadPaper = () => {
       toast.success("PDF uploaded and parsed successfully");
     } catch (error) {
       console.error("Error uploading PDF:", error);
+      
+      // Display specific error message based on error type
       toast.error("Failed to upload PDF", {
         description: error instanceof Error ? error.message : "An unexpected error occurred"
       });

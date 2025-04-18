@@ -7,14 +7,31 @@ export const uploadPaper = async (file: File): Promise<UploadResponse> => {
   const formData = new FormData();
   formData.append("file", file);
   
-  const response = await fetch(`${API_URL}/upload`, {
+  // Get token from localStorage if available
+  const token = localStorage.getItem('authToken');
+  
+  const headers: HeadersInit = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  const response = await fetch(`${API_URL}/papers/pdf`, {
     method: "POST",
+    headers,
     body: formData,
   });
   
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Upload failed: ${errorText}`);
+    if (response.status === 401) {
+      throw new Error("Unauthorized: Please login to upload papers");
+    } else if (response.status === 403) {
+      throw new Error("Forbidden: You don't have permission to upload papers");
+    } else if (response.status === 500) {
+      throw new Error("Server error: The upload could not be processed");
+    } else {
+      const errorText = await response.text();
+      throw new Error(`Upload failed (${response.status}): ${errorText}`);
+    }
   }
   
   return response.json();
