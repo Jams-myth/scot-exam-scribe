@@ -1,18 +1,29 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { uploadPaper, savePaper, saveQuestions } from "@/services/api";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
 import { FilePlus } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { toast } from "sonner";
 
 const UploadPaper = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, redirectToLogin } = useAuth();
+  const location = useLocation();
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [parsedData, setParsedData] = useState<any | null>(null);
+
+  // Check authentication on component mount
+  useEffect(() => {
+    if (!isAuthenticated) {
+      redirectToLogin(location.pathname);
+    }
+  }, [isAuthenticated, redirectToLogin, location.pathname]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null;
@@ -27,6 +38,12 @@ const UploadPaper = () => {
 
   const handleUpload = async () => {
     if (!file) return;
+    
+    if (!isAuthenticated) {
+      redirectToLogin(location.pathname);
+      return;
+    }
+    
     setUploading(true);
     setError(null);
 
@@ -36,8 +53,14 @@ const UploadPaper = () => {
 
       const data = await uploadPaper(formData);
       setParsedData(data);
+      toast.success("Paper uploaded successfully");
     } catch (err: any) {
-      setError(err.message || "Upload failed.");
+      if (err.message === "Unauthorized: Please login to upload papers") {
+        redirectToLogin(location.pathname);
+      } else {
+        setError(err.message || "Upload failed.");
+        toast.error(err.message || "Upload failed");
+      }
     } finally {
       setUploading(false);
     }
@@ -45,6 +68,11 @@ const UploadPaper = () => {
 
   const handleApproveAndSave = async () => {
     if (!parsedData) return;
+    
+    if (!isAuthenticated) {
+      redirectToLogin(location.pathname);
+      return;
+    }
 
     try {
       const savedPaper = await savePaper({
@@ -71,16 +99,21 @@ const UploadPaper = () => {
       );
 
       setParsedData(null);
-      alert("Paper and questions saved successfully.");
+      toast.success("Paper and questions saved successfully");
     } catch (err: any) {
-      setError(err.message || "Failed to save paper.");
+      if (err.message && err.message.includes("Unauthorized")) {
+        redirectToLogin(location.pathname);
+      } else {
+        setError(err.message || "Failed to save paper.");
+        toast.error(err.message || "Failed to save paper");
+      }
     }
   };
 
   if (!isAuthenticated) {
     return (
       <Card className="p-4 max-w-xl mx-auto mt-8">
-        <Alert variant="warning">
+        <Alert>
           You must be logged in to upload an exam paper.
         </Alert>
       </Card>

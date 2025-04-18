@@ -1,15 +1,15 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { useAuth } from '@/lib/hooks/useAuth';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,9 +17,7 @@ const Login = () => {
     try {
       // Placeholder for actual login logic
       if (username === 'admin' && password === 'password') {
-        localStorage.setItem('authToken', 'dummy-token');
-        toast.success('Login successful');
-        navigate('/');
+        login('dummy-token');
       } else {
         toast.error('Invalid credentials');
       }
