@@ -3,6 +3,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 
+// For debugging purposes
+const TOKEN_KEY = 'authToken';
+const REDIRECT_KEY = 'redirectAfterLogin';
+
 export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
@@ -11,15 +15,20 @@ export const useAuth = () => {
   // Check authentication on initial load and route changes
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem('authToken');
-      setIsAuthenticated(!!token);
+      const token = localStorage.getItem(TOKEN_KEY);
+      const isValid = !!token;
+      console.log('Auth check - Token exists:', isValid);
+      setIsAuthenticated(isValid);
     };
     
     checkAuth();
     
     // Listen for storage events (in case token is updated in another tab)
-    const handleStorageChange = () => {
-      checkAuth();
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === TOKEN_KEY) {
+        console.log('Auth token changed in storage');
+        checkAuth();
+      }
     };
     
     window.addEventListener('storage', handleStorageChange);
@@ -29,24 +38,23 @@ export const useAuth = () => {
   }, [location.pathname]);
 
   const login = (token: string) => {
-    localStorage.setItem('authToken', token);
+    console.log('Setting auth token:', token.substring(0, 10) + '...');
+    localStorage.setItem(TOKEN_KEY, token);
     setIsAuthenticated(true);
     
     // Check if there's a redirect path stored
-    const redirectTo = localStorage.getItem('redirectAfterLogin');
-    if (redirectTo) {
-      localStorage.removeItem('redirectAfterLogin');
-      toast.success('Login successful, redirecting...');
-      navigate(redirectTo);
-    } else {
-      toast.success('Login successful');
-      navigate('/');
-    }
+    const redirectTo = localStorage.getItem(REDIRECT_KEY) || '/';
+    console.log('Redirecting after login to:', redirectTo);
+    
+    localStorage.removeItem(REDIRECT_KEY);
+    toast.success('Login successful, redirecting...');
+    navigate(redirectTo);
   };
 
   const logout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('redirectAfterLogin');
+    console.log('Logging out, removing auth token');
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REDIRECT_KEY);
     setIsAuthenticated(false);
     toast.info('Logged out successfully');
     navigate('/login');
@@ -54,7 +62,8 @@ export const useAuth = () => {
 
   // Save intended destination before redirecting to login
   const redirectToLogin = (from: string = '/') => {
-    localStorage.setItem('redirectAfterLogin', from);
+    console.log('Saving redirect path:', from);
+    localStorage.setItem(REDIRECT_KEY, from);
     navigate(`/login?redirect=${encodeURIComponent(from)}`);
   };
 

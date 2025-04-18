@@ -14,34 +14,41 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Extract redirect path from query params
+  const getRedirectPath = () => {
+    const urlParams = new URLSearchParams(location.search);
+    const redirectPath = urlParams.get('redirect') || localStorage.getItem('redirectAfterLogin') || '/';
+    console.log('Login - Redirect path:', redirectPath);
+    return redirectPath;
+  };
+
   // Check for redirect param in URL or localStorage
   useEffect(() => {
     // If already authenticated, redirect
     if (isAuthenticated) {
-      const urlParams = new URLSearchParams(location.search);
-      const redirectPath = urlParams.get('redirect') || localStorage.getItem('redirectAfterLogin') || '/';
+      const redirectPath = getRedirectPath();
+      console.log('Already authenticated, redirecting to:', redirectPath);
       navigate(redirectPath, { replace: true });
     }
   }, [isAuthenticated, navigate, location]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Login attempt for user:', username);
     
     try {
-      // Placeholder for actual login logic
+      // Use the same dummy token that the backend expects
+      // In a real app, this would come from a backend authentication endpoint
       if (username === 'admin' && password === 'password') {
-        // Get redirect path from query parameters or localStorage
-        const urlParams = new URLSearchParams(location.search);
-        const redirectPath = urlParams.get('redirect') || localStorage.getItem('redirectAfterLogin') || '/';
-        
-        // Call login function with token and redirect path
-        login('dummy-token');
-        
-        // Redirect happens in the useAuth hook or the effect above
+        console.log('Login successful');
+        // Use a token format that matches what your backend expects
+        login('dummy-auth-token-for-admin-user');
       } else {
+        console.log('Invalid credentials');
         toast.error('Invalid credentials');
       }
     } catch (error) {
+      console.error('Login error:', error);
       toast.error('Login failed');
     }
   };
