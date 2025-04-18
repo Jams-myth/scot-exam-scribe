@@ -6,7 +6,7 @@ import { Alert } from "@/components/ui/alert";
 import { useLocation } from "react-router-dom";
 import FileUpload from "@/components/FileUpload";
 import DebugPanel from "@/components/DebugPanel";
-import { getAuthToken } from "@/services/api";
+import { getAuthToken, API_URL } from "@/services/api";
 
 const UploadPaper = () => {
   const { isAuthenticated, redirectToLogin } = useAuth();
@@ -16,9 +16,55 @@ const UploadPaper = () => {
   const [lastNetworkRequest, setLastNetworkRequest] = useState<any>(null);
 
   useEffect(() => {
+    // Listen for debug-log events from other components
+    const handleDebugLog = (event: CustomEvent) => {
+      addDebugInfo(event.detail);
+    };
+
+    window.addEventListener('debug-log' as any, handleDebugLog as any);
+    return () => {
+      window.removeEventListener('debug-log' as any, handleDebugLog as any);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Initialize debug information
+    addDebugInfo(`App initialized, using API: ${API_URL}`);
+    
     const token = getAuthToken();
     addDebugInfo(`Auth check: ${isAuthenticated ? 'Authenticated' : 'Not authenticated'}`);
     addDebugInfo(`Token exists: ${!!token}`);
+
+    // Test if we can reach the API
+    const testConnection = async () => {
+      try {
+        addDebugInfo(`Testing API connection to ${API_URL}...`);
+        const response = await fetch(`${API_URL}/health`, { 
+          method: 'GET', 
+          mode: 'cors',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
+        const status = `${response.status} ${response.statusText}`;
+        addDebugInfo(`API connection test result: ${status}`);
+        
+        if (response.ok) {
+          try {
+            const data = await response.json();
+            addDebugInfo(`API health check response: ${JSON.stringify(data)}`);
+          } catch (e) {
+            addDebugInfo(`API responded but with invalid JSON`);
+          }
+        }
+      } catch (err) {
+        addDebugInfo(`API connection test failed: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    };
+    
+    testConnection();
+    
     if (token) {
       addDebugInfo(`Token format: ${token.substring(0, 20)}...`);
       try {
@@ -28,7 +74,9 @@ const UploadPaper = () => {
           addDebugInfo(`Token payload: ${JSON.stringify(payload)}`);
           if (payload.exp) {
             const expDate = new Date(payload.exp * 1000);
-            addDebugInfo(`Token expires: ${expDate.toLocaleString()}`);
+            const now = new Date();
+            const timeLeft = Math.floor((expDate.getTime() - now.getTime()) / 1000 / 60);
+            addDebugInfo(`Token expires: ${expDate.toLocaleString()} (${timeLeft} minutes remaining)`);
           }
         }
       } catch (err) {
@@ -37,6 +85,7 @@ const UploadPaper = () => {
     }
     
     if (!isAuthenticated) {
+      addDebugInfo(`Not authenticated, redirecting to login`);
       redirectToLogin(location.pathname);
     }
   }, [isAuthenticated, redirectToLogin, location.pathname]);

@@ -1,8 +1,7 @@
-
 import { Paper, ParsedQuestion, UploadResponse, ApiResponse } from "@/types/exam";
 
-// API base URL
-export const API_URL = "https://preview--exam-vault-api.lovable.app";
+// Update API base URL to point to the correct backend
+export const API_URL = "https://exam-vault-api.onrender.com";
 
 export const getAuthToken = () => {
   const token = localStorage.getItem('authToken');
@@ -47,18 +46,25 @@ export const uploadPaper = async (file: File): Promise<UploadResponse> => {
     // Ensure token has correct Bearer format
     const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
     
-    // Log request headers for debugging
-    const headers: Record<string, string> = {
-      'Authorization': authHeader
+    // Enhanced request logging
+    const requestDetails = {
+      url: uploadUrl,
+      method: 'POST',
+      headers: {
+        Authorization: authHeader.substring(0, 25) + '...'
+      },
+      fileSize: file.size,
+      fileType: file.type,
+      fileName: file.name
     };
-    console.log('Request headers:', JSON.stringify({
-      Authorization: authHeader.substring(0, 25) + '...'
-    }));
+    console.log('Request details:', JSON.stringify(requestDetails));
     
     // Make the request with proper error handling
     const response = await fetch(uploadUrl, {
       method: "POST",
-      headers: headers,
+      headers: {
+        'Authorization': authHeader
+      },
       body: formData,
       credentials: 'include', // Include cookies if they're used for auth
     });
@@ -99,12 +105,18 @@ export const uploadPaper = async (file: File): Promise<UploadResponse> => {
     // Return the parsed JSON response
     return response.json();
   } catch (error: any) {
-    // Log the error for debugging
+    // Enhanced error logging
     console.error("API Error in uploadPaper:", error);
     
-    // If it's a network error, add more context
+    // If it's a network error, add more context and check CORS
     if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-      throw new Error("Network error: Could not connect to API server. Check your internet connection or if the server is running.");
+      const corsError = error.message.includes('CORS') || error.message.includes('cors');
+      const errorMessage = corsError 
+        ? `CORS error: The server at ${API_URL} does not allow requests from this domain. Please check CORS settings.`
+        : `Network error: Could not connect to API server at ${API_URL}. Check your internet connection or if the server is running.`;
+      
+      console.error(errorMessage);
+      throw new Error(errorMessage);
     }
     
     throw error;

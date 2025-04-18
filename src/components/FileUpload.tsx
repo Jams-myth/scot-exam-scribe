@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { Alert } from './ui/alert';
 import { toast } from 'sonner';
 import { Paper, ParsedQuestion } from '@/types/exam';
-import { uploadPaper, savePaper, saveQuestions } from '@/services/api';
+import { uploadPaper, savePaper, saveQuestions, API_URL } from '@/services/api';
 
 interface FileUploadProps {
   isAuthenticated: boolean;
@@ -41,10 +41,35 @@ const FileUpload = ({ isAuthenticated, addDebugInfo, setLastNetworkRequest }: Fi
     
     setUploading(true);
     setError(null);
+    
+    // Update the last network request with initial details
+    setLastNetworkRequest({
+      url: `${API_URL}/papers/pdf`,
+      method: 'POST',
+      file: {
+        name: file.name,
+        size: file.size,
+        type: file.type
+      },
+      timestamp: new Date().toISOString(),
+      status: 'Sending request...'
+    });
+    
     addDebugInfo('Starting file upload process');
+    addDebugInfo(`Target API: ${API_URL}/papers/pdf`);
     
     try {
       const result = await uploadPaper(file);
+      
+      // Update network request with success details
+      setLastNetworkRequest((prev: any) => ({
+        ...prev,
+        status: 'Success',
+        statusCode: 200,
+        timestamp: new Date().toISOString(),
+        responseData: result
+      }));
+      
       addDebugInfo('Upload successful!');
       addDebugInfo(`Response: ${JSON.stringify(result, null, 2).substring(0, 200)}...`);
       
@@ -52,6 +77,16 @@ const FileUpload = ({ isAuthenticated, addDebugInfo, setLastNetworkRequest }: Fi
       toast.success("Paper uploaded successfully");
     } catch (err: any) {
       const errorMessage = err.message || "Upload failed.";
+      
+      // Update network request with error details
+      setLastNetworkRequest((prev: any) => ({
+        ...prev,
+        status: 'Failed',
+        error: errorMessage,
+        errorDetails: err.toString(),
+        timestamp: new Date().toISOString()
+      }));
+      
       addDebugInfo(`Upload error: ${errorMessage}`);
       setError(errorMessage);
       toast.error(errorMessage);
@@ -79,8 +114,27 @@ const FileUpload = ({ isAuthenticated, addDebugInfo, setLastNetworkRequest }: Fi
         questions: []
       };
       
+      // Update network request with save operation details
+      setLastNetworkRequest({
+        url: `${API_URL}/papers`,
+        method: 'POST',
+        timestamp: new Date().toISOString(),
+        status: 'Sending request...',
+        paperData: { ...paperData, questions: `${parsedData.questions.length} questions` }
+      });
+      
+      addDebugInfo(`Saving paper to API: ${API_URL}/papers`);
       const savedPaper = await savePaper(paperData);
       const paperId = savedPaper.data.id;
+      
+      // Update network request with questions save operation
+      setLastNetworkRequest((prev: any) => ({
+        ...prev,
+        url: `${API_URL}/questions`,
+        status: 'Saving questions...',
+        paperId: paperId,
+        timestamp: new Date().toISOString()
+      }));
       
       const formattedQuestions = parsedData.questions.map((q: any) => ({
         text: q.question_text || "",
@@ -93,10 +147,27 @@ const FileUpload = ({ isAuthenticated, addDebugInfo, setLastNetworkRequest }: Fi
         diagrams: q.diagrams || []
       }));
       
+      addDebugInfo(`Saving ${formattedQuestions.length} questions to API: ${API_URL}/questions`);
       await saveQuestions(paperId, formattedQuestions);
+      
+      // Update network request with success status
+      setLastNetworkRequest((prev: any) => ({
+        ...prev,
+        status: 'Success',
+        timestamp: new Date().toISOString()
+      }));
+      
       setParsedData(null);
       toast.success("Paper and questions saved successfully");
     } catch (err: any) {
+      // Update network request with error details
+      setLastNetworkRequest((prev: any) => ({
+        ...prev,
+        status: 'Failed',
+        error: err.message || "Failed to save paper.",
+        timestamp: new Date().toISOString()
+      }));
+      
       setError(err.message || "Failed to save paper.");
       toast.error(err.message || "Failed to save paper");
     }
