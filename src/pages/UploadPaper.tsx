@@ -10,6 +10,7 @@ import { FilePlus } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ParsedQuestion } from "@/types/exam";
 
 const UploadPaper = () => {
   const { isAuthenticated, redirectToLogin } = useAuth();
@@ -96,6 +97,9 @@ const UploadPaper = () => {
     }
 
     try {
+      // Create an empty questions array to satisfy the Paper type requirement
+      const questions: ParsedQuestion[] = [];
+      
       const savedPaper = await savePaper({
         title: parsedData.title,
         subject: parsedData.subject,
@@ -105,7 +109,8 @@ const UploadPaper = () => {
         total_marks: parsedData.total_marks,
         description: parsedData.description,
         time_limit_minutes: parsedData.time_limit_minutes,
-        grade_level: parsedData.grade_level
+        grade_level: parsedData.grade_level,
+        questions: questions // Add the required questions property
       });
 
       // Access id from data property of the response
