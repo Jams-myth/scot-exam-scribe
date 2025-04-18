@@ -10,8 +10,22 @@ export const useAuth = () => {
 
   // Check authentication on initial load and route changes
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    setIsAuthenticated(!!token);
+    const checkAuth = () => {
+      const token = localStorage.getItem('authToken');
+      setIsAuthenticated(!!token);
+    };
+    
+    checkAuth();
+    
+    // Listen for storage events (in case token is updated in another tab)
+    const handleStorageChange = () => {
+      checkAuth();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, [location.pathname]);
 
   const login = (token: string) => {

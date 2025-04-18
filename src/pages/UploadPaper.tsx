@@ -50,31 +50,11 @@ const UploadPaper = () => {
     setError(null);
 
     try {
-      // Create FormData and append file
-      const formData = new FormData();
-      formData.append("file", file);
-
-      // Get auth token for API request
-      const token = localStorage.getItem('authToken');
+      // Use the uploadPaper API function from services/api.ts
+      const result = await uploadPaper(file);
       
-      // Manual fetch with proper headers instead of using the service function
-      const response = await fetch("https://exam-vault-api.onrender.com/api/v1/papers/pdf", {
-        method: "POST",
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
-      });
-      
-      if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error("Unauthorized: Please login to upload papers");
-        } 
-        throw new Error(`Upload failed (${response.status})`);
-      }
-
-      const data = await response.json();
-      setParsedData(data);
+      // Set the parsed data from the API response
+      setParsedData(result);
       toast.success("Paper uploaded successfully");
     } catch (err: any) {
       if (err.message === "Unauthorized: Please login to upload papers") {
@@ -82,6 +62,8 @@ const UploadPaper = () => {
       } else {
         setError(err.message || "Upload failed.");
         toast.error(err.message || "Upload failed");
+        // Log the error for debugging
+        console.error("Upload error:", err);
       }
     } finally {
       setUploading(false);
