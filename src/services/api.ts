@@ -1,23 +1,24 @@
-
 import { Paper, ParsedQuestion, UploadResponse, ApiResponse } from "@/types/exam";
 
 const API_URL = "https://exam-vault-api.onrender.com/api/v1";
+
+export const getAuthToken = () => localStorage.getItem('authToken');
+export const isAuthenticated = () => !!getAuthToken();
 
 export const uploadPaper = async (file: File): Promise<UploadResponse> => {
   const formData = new FormData();
   formData.append("file", file);
   
-  // Get token from localStorage if available
-  const token = localStorage.getItem('authToken');
-  
-  const headers: HeadersInit = {};
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+  const token = getAuthToken();
+  if (!token) {
+    throw new Error("Authentication required: Please login to upload papers");
   }
   
   const response = await fetch(`${API_URL}/papers/pdf`, {
     method: "POST",
-    headers,
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
     body: formData,
   });
   

@@ -1,21 +1,25 @@
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { Upload, FileUp, Loader2 } from "lucide-react";
+import { Upload, FileUp, Loader2, LogIn } from "lucide-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { QuestionTag } from "@/components/QuestionTag";
-import { uploadPaper, savePaper, saveQuestions } from "@/services/api";
+import { uploadPaper, savePaper, saveQuestions, isAuthenticated } from "@/services/api";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { ParsedQuestion } from "@/types/exam";
 
-// Define form schema with validation rules
 const formSchema = z.object({
   file: z.instanceof(File).refine((file) => file.size <= 10000000, {
     message: "File size must be less than 10MB",
@@ -31,6 +35,7 @@ const UploadPaper = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [parsedQuestions, setParsedQuestions] = useState<ParsedQuestion[] | null>(null);
+  const authenticated = isAuthenticated();
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -47,7 +52,6 @@ const UploadPaper = () => {
     } catch (error) {
       console.error("Error uploading PDF:", error);
       
-      // Display specific error message based on error type
       toast.error("Failed to upload PDF", {
         description: error instanceof Error ? error.message : "An unexpected error occurred"
       });
@@ -61,10 +65,9 @@ const UploadPaper = () => {
     setIsSaving(true);
     
     try {
-      // Create the paper first
       const paper = {
         title: form.getValues("file").name.replace(".pdf", ""),
-        subject: "General", // This could be added to the form
+        subject: "General",
         year: new Date().getFullYear(),
         type: "Practice",
         duration: 60,
@@ -85,6 +88,44 @@ const UploadPaper = () => {
     }
   };
 
+  const UploadButton = () => {
+    if (!authenticated) {
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Button type="submit" className="w-full" disabled>
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Login Required to Upload
+                </Button>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Please login to upload exam papers</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    }
+
+    return (
+      <Button type="submit" className="w-full" disabled={isUploading}>
+        {isUploading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Processing PDF...
+          </>
+        ) : (
+          <>
+            <Upload className="mr-2 h-4 w-4" />
+            Upload and Parse Questions
+          </>
+        )}
+      </Button>
+    );
+  };
+
   return (
     <div className="container py-10 max-w-4xl mx-auto">
       <Card>
@@ -97,6 +138,14 @@ const UploadPaper = () => {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {!authenticated && (
+                <Alert>
+                  <AlertDescription>
+                    You must be logged in to upload exam papers
+                  </AlertDescription>
+                </Alert>
+              )}
+              
               <FormField
                 control={form.control}
                 name="file"
@@ -142,19 +191,7 @@ const UploadPaper = () => {
                 )}
               />
               
-              <Button type="submit" className="w-full" disabled={isUploading}>
-                {isUploading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing PDF...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload and Parse Questions
-                  </>
-                )}
-              </Button>
+              <UploadButton />
             </form>
           </Form>
 
