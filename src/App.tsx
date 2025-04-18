@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -26,7 +25,6 @@ const App = () => (
             <Route path="/upload" element={<UploadPaper />} />
             <Route path="/exams" element={<ExamBrowser />} />
             <Route path="/exam/:examId" element={<ExamViewer />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

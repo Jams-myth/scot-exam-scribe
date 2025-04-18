@@ -1,15 +1,18 @@
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
-import { Upload, FileUp, Loader2, CheckCircle, AlertCircle } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
+import { Upload, FileUp, Loader2 } from "lucide-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { QuestionTag } from "@/components/QuestionTag";
+import { uploadPaper, savePaper, saveQuestions } from "@/services/api";
+import type { ParsedQuestion } from "@/types/exam";
 
 // Define form schema with validation rules
 const formSchema = z.object({
@@ -22,24 +25,12 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface ParsedQuestion {
-  id: string;
-  text: string;
-  options?: string[];
-  correctAnswer: string;
-}
-
-interface UploadResponse {
-  success: boolean;
-  questions: ParsedQuestion[];
-  error?: string;
-}
-
 const UploadPaper = () => {
+  const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [parsedQuestions, setParsedQuestions] = useState<ParsedQuestion[] | null>(null);
   
-  // Initialize the form
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
   });
@@ -49,40 +40,45 @@ const UploadPaper = () => {
     setParsedQuestions(null);
     
     try {
-      // Create FormData object
-      const formData = new FormData();
-      formData.append("file", values.file);
-      
-      const response = await fetch("https://exam-vault-api.onrender.com/api/v1/upload", {
-        method: "POST",
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Server error: ${response.status} - ${errorText || response.statusText}`);
-      }
-      
-      const result: UploadResponse = await response.json();
-      
-      if (!result.success || !result.questions) {
-        throw new Error(result.error || "Failed to parse exam questions");
-      }
-      
+      const result = await uploadPaper(values.file);
       setParsedQuestions(result.questions);
-      
-      toast.success("PDF uploaded and parsed successfully", {
-        description: `${result.questions.length} questions extracted`
-      });
-      
+      toast.success("PDF uploaded and parsed successfully");
     } catch (error) {
       console.error("Error uploading PDF:", error);
       toast.error("Failed to upload PDF", {
         description: error instanceof Error ? error.message : "An unexpected error occurred"
       });
-      setParsedQuestions(null);
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!parsedQuestions) return;
+    setIsSaving(true);
+    
+    try {
+      // Create the paper first
+      const paper = {
+        title: form.getValues("file").name.replace(".pdf", ""),
+        subject: "General", // This could be added to the form
+        year: new Date().getFullYear(),
+        type: "Practice",
+        duration: 60,
+        questions: parsedQuestions
+      };
+      
+      const savedPaper = await savePaper(paper);
+      await saveQuestions(savedPaper.data.id, parsedQuestions);
+      
+      toast.success("Exam saved successfully");
+      navigate("/exams");
+    } catch (error) {
+      toast.error("Failed to save exam", {
+        description: error instanceof Error ? error.message : "An unexpected error occurred"
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -162,8 +158,6 @@ const UploadPaper = () => {
           {parsedQuestions && parsedQuestions.length > 0 && (
             <div className="mt-8 space-y-6">
               <Alert>
-                <CheckCircle className="h-4 w-4" />
-                <AlertTitle>Questions Extracted Successfully</AlertTitle>
                 <AlertDescription>
                   {parsedQuestions.length} questions were parsed from the PDF. Review them below.
                 </AlertDescription>
@@ -173,29 +167,57 @@ const UploadPaper = () => {
                 {parsedQuestions.map((question, index) => (
                   <Card key={question.id}>
                     <CardContent className="pt-6">
-                      <h3 className="font-semibold mb-2">Question {index + 1}</h3>
-                      <p className="text-sm mb-4">{question.text}</p>
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        <QuestionTag label={question.type} variant="default" />
+                        <QuestionTag label={`${question.points} marks`} variant="secondary" />
+                        {question.section && (
+                          <QuestionTag label={`Section ${question.section}`} variant="outline" />
+                        )}
+                      </div>
                       
-                      {question.options && (
-                        <div className="ml-4 space-y-2">
-                          {question.options.map((option, optIndex) => (
-                            <div key={optIndex} className="flex items-center gap-2">
-                              <span className="text-sm font-medium">{String.fromCharCode(65 + optIndex)}.</span>
-                              <span className="text-sm">{option}</span>
-                            </div>
-                          ))}
+                      <div className="prose max-w-none">
+                        <h3 className="text-lg font-medium mb-2">Question {index + 1}</h3>
+                        <div dangerouslySetInnerHTML={{ __html: question.text }} />
+                        
+                        {question.options && (
+                          <div className="mt-4 space-y-2">
+                            {question.options.map((option, optIndex) => (
+                              <div key={optIndex} className="flex items-center gap-2">
+                                <span className="font-medium">{String.fromCharCode(65 + optIndex)}.</span>
+                                <span>{option}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        
+                        <div className="mt-4 pt-4 border-t">
+                          <p className="text-sm text-muted-foreground">
+                            <span className="font-medium">Correct Answer:</span> {question.correctAnswer}
+                          </p>
                         </div>
-                      )}
-                      
-                      <div className="mt-4 pt-4 border-t">
-                        <p className="text-sm text-muted-foreground">
-                          <span className="font-medium">Correct Answer:</span> {question.correctAnswer}
-                        </p>
                       </div>
                     </CardContent>
                   </Card>
                 ))}
               </div>
+
+              <Button 
+                onClick={handleSave} 
+                className="w-full mt-6"
+                disabled={isSaving}
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving Exam...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="mr-2 h-4 w-4" />
+                    Approve & Save Exam
+                  </>
+                )}
+              </Button>
             </div>
           )}
         </CardContent>
