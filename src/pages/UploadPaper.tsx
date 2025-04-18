@@ -9,6 +9,7 @@ import { Alert } from "@/components/ui/alert";
 import { FilePlus } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const UploadPaper = () => {
   const { isAuthenticated, redirectToLogin } = useAuth();
@@ -48,10 +49,30 @@ const UploadPaper = () => {
     setError(null);
 
     try {
+      // Create FormData and append file
       const formData = new FormData();
       formData.append("file", file);
 
-      const data = await uploadPaper(formData);
+      // Get auth token for API request
+      const token = localStorage.getItem('authToken');
+      
+      // Manual fetch with proper headers instead of using the service function
+      const response = await fetch("https://exam-vault-api.onrender.com/api/v1/papers/pdf", {
+        method: "POST",
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+      
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error("Unauthorized: Please login to upload papers");
+        } 
+        throw new Error(`Upload failed (${response.status})`);
+      }
+
+      const data = await response.json();
       setParsedData(data);
       toast.success("Paper uploaded successfully");
     } catch (err: any) {
@@ -78,25 +99,33 @@ const UploadPaper = () => {
       const savedPaper = await savePaper({
         title: parsedData.title,
         subject: parsedData.subject,
-        grade_level: parsedData.grade_level,
+        year: parsedData.year || new Date().getFullYear(),
+        type: parsedData.type || "Exam",
+        duration: parsedData.time_limit_minutes || 60,
         total_marks: parsedData.total_marks,
         description: parsedData.description,
         time_limit_minutes: parsedData.time_limit_minutes,
+        grade_level: parsedData.grade_level
       });
 
-      await Promise.all(
-        parsedData.questions.map((q: any) =>
-          saveQuestions(savedPaper.id, {
-            question_text: q.question_text,
-            question_type: q.question_type,
-            marks: q.marks,
-            difficulty_level: q.difficulty_level,
-            section: q.section,
-            marking_scheme: q.marking_scheme,
-            diagrams: q.diagrams,
-          })
-        )
+      // Access id from data property of the response
+      const paperId = savedPaper.data.id;
+      
+      // Map questions to match the expected format
+      const questionPromises = parsedData.questions.map((q: any) =>
+        saveQuestions(paperId, [{
+          text: q.question_text || "",
+          type: q.question_type || "Essay",
+          points: q.marks || 0,
+          correctAnswer: "",
+          section: q.section || "",
+          difficulty_level: q.difficulty_level,
+          marking_scheme: q.marking_scheme,
+          diagrams: q.diagrams
+        }])
       );
+
+      await Promise.all(questionPromises);
 
       setParsedData(null);
       toast.success("Paper and questions saved successfully");
@@ -124,10 +153,19 @@ const UploadPaper = () => {
     <Card className="p-4 max-w-xl mx-auto mt-8 space-y-4">
       <div className="flex items-center gap-2">
         <Input type="file" accept=".pdf" onChange={handleFileChange} />
-        <Button onClick={handleUpload} disabled={!file || uploading}>
-          <FilePlus className="mr-2 h-4 w-4" />
-          {uploading ? "Uploading..." : "Upload"}
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+                <Button onClick={handleUpload} disabled={!file || uploading || !isAuthenticated}>
+                  <FilePlus className="mr-2 h-4 w-4" />
+                  {uploading ? "Uploading..." : "Upload"}
+                </Button>
+              </span>
+            </TooltipTrigger>
+            {!isAuthenticated && <TooltipContent>Login required</TooltipContent>}
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       {error && <Alert variant="destructive">{error}</Alert>}

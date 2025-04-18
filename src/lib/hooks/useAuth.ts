@@ -41,7 +41,7 @@ export const useAuth = () => {
   // Save intended destination before redirecting to login
   const redirectToLogin = (from: string = '/') => {
     localStorage.setItem('redirectAfterLogin', from);
-    navigate('/login');
+    navigate(`/login?redirect=${encodeURIComponent(from)}`);
   };
 
   return { 
