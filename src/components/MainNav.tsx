@@ -30,7 +30,7 @@ const MainNav = () => {
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <Link to="/" legacyBehavior passHref>
+              <Link to="/">
                 <NavigationMenuLink 
                   className={cn(
                     navigationMenuTriggerStyle(),
@@ -44,7 +44,7 @@ const MainNav = () => {
             </NavigationMenuItem>
 
             <NavigationMenuItem>
-              <Link to="/exams" legacyBehavior passHref>
+              <Link to="/exams">
                 <NavigationMenuLink 
                   className={cn(
                     navigationMenuTriggerStyle(),
@@ -58,7 +58,7 @@ const MainNav = () => {
             </NavigationMenuItem>
             
             <NavigationMenuItem>
-              <Link to="/upload" legacyBehavior passHref>
+              <Link to="/upload">
                 <NavigationMenuLink 
                   className={cn(
                     navigationMenuTriggerStyle(),

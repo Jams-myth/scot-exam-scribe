@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -85,14 +84,12 @@ const ExamViewer = () => {
     enabled: !!examId,
   });
 
-  // Initialize timer when exam loads
   useEffect(() => {
     if (exam && !timeRemaining) {
-      setTimeRemaining(exam.duration * 60); // Convert minutes to seconds
+      setTimeRemaining(exam.duration * 60);
     }
   }, [exam, timeRemaining]);
 
-  // Timer countdown
   useEffect(() => {
     if (timeRemaining === null || timeRemaining <= 0 || examSubmitted) return;
     
@@ -100,7 +97,9 @@ const ExamViewer = () => {
       setTimeRemaining(prev => {
         if (prev === null || prev <= 1) {
           clearInterval(timer);
-          toast.error("Time's up!", {
+          toast({
+            variant: "destructive",
+            title: "Time's up!",
             description: "Your exam has been automatically submitted."
           });
           handleSubmitExam();
@@ -113,7 +112,6 @@ const ExamViewer = () => {
     return () => clearInterval(timer);
   }, [timeRemaining, examSubmitted]);
 
-  // Initialize user answers when exam loads
   useEffect(() => {
     if (exam && userAnswers.length === 0) {
       const initialAnswers: UserAnswer[] = exam.questions.map((question) => ({
@@ -156,16 +154,16 @@ const ExamViewer = () => {
     
     const userAnswer = userAnswers.find(ua => ua.questionId === currentQuestion.id);
     if (!userAnswer || !userAnswer.answer) {
-      toast.warning("No answer provided", {
+      toast({
+        variant: "default",
+        title: "No answer provided",
         description: "Please provide an answer before checking."
       });
       return;
     }
 
-    // Check if the answer is correct
     const isCorrect = userAnswer.answer.toLowerCase() === currentQuestion.correctAnswer.toLowerCase();
     
-    // Update the user's answer with the correct/incorrect status
     setUserAnswers(prev => 
       prev.map(ua => 
         ua.questionId === currentQuestion.id 
@@ -178,7 +176,6 @@ const ExamViewer = () => {
   };
 
   const handleSubmitExam = () => {
-    // Calculate the score
     if (!exam) return;
     
     const answeredQuestions = userAnswers.filter(ua => ua.answer !== "");
@@ -191,7 +188,6 @@ const ExamViewer = () => {
     const totalQuestions = exam.questions.length;
     const percentage = Math.round((score / totalQuestions) * 100);
 
-    // Mark all answers as correct/incorrect for review
     const markedAnswers = userAnswers.map(ua => {
       const question = exam.questions.find(q => q.id === ua.questionId);
       const isCorrect = question && ua.answer.toLowerCase() === question.correctAnswer.toLowerCase();
@@ -202,8 +198,9 @@ const ExamViewer = () => {
     setExamSubmitted(true);
     setShowFeedback(true);
     
-    toast.success("Exam submitted successfully", {
-      description: `Your score: ${score}/${totalQuestions} (${percentage}%)`
+    toast({
+      title: "Exam submitted successfully",
+      description: `Your score: ${score}/${totalQuestions} (${percentage}%)`,
     });
   };
 
@@ -316,7 +313,6 @@ const ExamViewer = () => {
           </div>
         )}
         
-        {/* Feedback section */}
         {showFeedback && userAnswer?.feedbackShown && (
           <Alert className={`mb-6 ${userAnswer.isCorrect ? 'border-green-500' : 'border-red-500'}`}>
             {userAnswer.isCorrect ? (
