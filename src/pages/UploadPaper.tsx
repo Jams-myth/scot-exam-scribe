@@ -1,268 +1,122 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { Upload, FileUp, Loader2, LogIn } from "lucide-react";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { uploadPaper, savePaper, saveQuestions } from "@/services/api";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { QuestionTag } from "@/components/QuestionTag";
-import { uploadPaper, savePaper, saveQuestions, isAuthenticated } from "@/services/api";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import type { ParsedQuestion } from "@/types/exam";
-
-const formSchema = z.object({
-  file: z.instanceof(File).refine((file) => file.size <= 10000000, {
-    message: "File size must be less than 10MB",
-  }).refine((file) => ["application/pdf"].includes(file.type), {
-    message: "Only PDF files are accepted",
-  })
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Alert } from "@/components/ui/alert";
+import { FilePlus } from "lucide-react";
 
 const UploadPaper = () => {
-  const navigate = useNavigate();
-  const [isUploading, setIsUploading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [parsedQuestions, setParsedQuestions] = useState<ParsedQuestion[] | null>(null);
-  const authenticated = isAuthenticated();
-  
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-  });
+  const { isAuthenticated } = useAuth();
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [parsedData, setParsedData] = useState<any | null>(null);
 
-  const onSubmit = async (values: FormValues) => {
-    setIsUploading(true);
-    setParsedQuestions(null);
-    
-    try {
-      const result = await uploadPaper(values.file);
-      setParsedQuestions(result.questions);
-      toast.success("PDF uploaded and parsed successfully");
-    } catch (error) {
-      console.error("Error uploading PDF:", error);
-      
-      toast.error("Failed to upload PDF", {
-        description: error instanceof Error ? error.message : "An unexpected error occurred"
-      });
-    } finally {
-      setIsUploading(false);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0] || null;
+    if (selected && selected.type === "application/pdf" && selected.size <= 10 * 1024 * 1024) {
+      setFile(selected);
+      setError(null);
+    } else {
+      setFile(null);
+      setError("Please upload a valid PDF file under 10MB.");
     }
   };
 
-  const handleSave = async () => {
-    if (!parsedQuestions) return;
-    setIsSaving(true);
-    
+  const handleUpload = async () => {
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+
     try {
-      const paper = {
-        title: form.getValues("file").name.replace(".pdf", ""),
-        subject: "General",
-        year: new Date().getFullYear(),
-        type: "Practice",
-        duration: 60,
-        questions: parsedQuestions
-      };
-      
-      const savedPaper = await savePaper(paper);
-      await saveQuestions(savedPaper.data.id, parsedQuestions);
-      
-      toast.success("Exam saved successfully");
-      navigate("/exams");
-    } catch (error) {
-      toast.error("Failed to save exam", {
-        description: error instanceof Error ? error.message : "An unexpected error occurred"
-      });
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const data = await uploadPaper(formData);
+      setParsedData(data);
+    } catch (err: any) {
+      setError(err.message || "Upload failed.");
     } finally {
-      setIsSaving(false);
+      setUploading(false);
     }
   };
 
-  const UploadButton = () => {
-    if (!authenticated) {
-      return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <Button type="submit" className="w-full" disabled>
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Login Required to Upload
-                </Button>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Please login to upload exam papers</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+  const handleApproveAndSave = async () => {
+    if (!parsedData) return;
+
+    try {
+      const savedPaper = await savePaper({
+        title: parsedData.title,
+        subject: parsedData.subject,
+        grade_level: parsedData.grade_level,
+        total_marks: parsedData.total_marks,
+        description: parsedData.description,
+        time_limit_minutes: parsedData.time_limit_minutes,
+      });
+
+      await Promise.all(
+        parsedData.questions.map((q: any) =>
+          saveQuestions(savedPaper.id, {
+            question_text: q.question_text,
+            question_type: q.question_type,
+            marks: q.marks,
+            difficulty_level: q.difficulty_level,
+            section: q.section,
+            marking_scheme: q.marking_scheme,
+            diagrams: q.diagrams,
+          })
+        )
       );
-    }
 
-    return (
-      <Button type="submit" className="w-full" disabled={isUploading}>
-        {isUploading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Processing PDF...
-          </>
-        ) : (
-          <>
-            <Upload className="mr-2 h-4 w-4" />
-            Upload and Parse Questions
-          </>
-        )}
-      </Button>
-    );
+      setParsedData(null);
+      alert("Paper and questions saved successfully.");
+    } catch (err: any) {
+      setError(err.message || "Failed to save paper.");
+    }
   };
+
+  if (!isAuthenticated) {
+    return (
+      <Card className="p-4 max-w-xl mx-auto mt-8">
+        <Alert variant="warning">
+          You must be logged in to upload an exam paper.
+        </Alert>
+      </Card>
+    );
+  }
 
   return (
-    <div className="container py-10 max-w-4xl mx-auto">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Upload Exam Paper</CardTitle>
-          <CardDescription>
-            Upload a PDF exam paper to extract questions automatically
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {!authenticated && (
-                <Alert>
-                  <AlertDescription>
-                    You must be logged in to upload exam papers
-                  </AlertDescription>
-                </Alert>
-              )}
-              
-              <FormField
-                control={form.control}
-                name="file"
-                render={({ field: { value, onChange, ...fieldProps } }) => (
-                  <FormItem>
-                    <FormLabel>Exam Paper (PDF)</FormLabel>
-                    <FormControl>
-                      <div className="flex items-center justify-center w-full">
-                        <label
-                          htmlFor="file-upload"
-                          className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-                        >
-                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                            <FileUp className="w-8 h-8 mb-2 text-gray-500" />
-                            <p className="mb-2 text-sm text-gray-500">
-                              <span className="font-semibold">Click to upload</span> or drag and drop
-                            </p>
-                            <p className="text-xs text-gray-500">PDF only (max 10MB)</p>
-                          </div>
-                          <Input
-                            id="file-upload"
-                            type="file"
-                            className="hidden"
-                            accept="application/pdf"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                onChange(file);
-                              }
-                            }}
-                            {...fieldProps}
-                          />
-                        </label>
-                      </div>
-                    </FormControl>
-                    {value && (
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Selected file: {value instanceof File ? value.name : ""}
-                      </p>
-                    )}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <UploadButton />
-            </form>
-          </Form>
+    <Card className="p-4 max-w-xl mx-auto mt-8 space-y-4">
+      <div className="flex items-center gap-2">
+        <Input type="file" accept=".pdf" onChange={handleFileChange} />
+        <Button onClick={handleUpload} disabled={!file || uploading}>
+          <FilePlus className="mr-2 h-4 w-4" />
+          {uploading ? "Uploading..." : "Upload"}
+        </Button>
+      </div>
 
-          {parsedQuestions && parsedQuestions.length > 0 && (
-            <div className="mt-8 space-y-6">
-              <Alert>
-                <AlertDescription>
-                  {parsedQuestions.length} questions were parsed from the PDF. Review them below.
-                </AlertDescription>
-              </Alert>
-              
-              <div className="space-y-4">
-                {parsedQuestions.map((question, index) => (
-                  <Card key={question.id}>
-                    <CardContent className="pt-6">
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        <QuestionTag label={question.type} variant="default" />
-                        <QuestionTag label={`${question.points} marks`} variant="secondary" />
-                        {question.section && (
-                          <QuestionTag label={`Section ${question.section}`} variant="outline" />
-                        )}
-                      </div>
-                      
-                      <div className="prose max-w-none">
-                        <h3 className="text-lg font-medium mb-2">Question {index + 1}</h3>
-                        <div dangerouslySetInnerHTML={{ __html: question.text }} />
-                        
-                        {question.options && (
-                          <div className="mt-4 space-y-2">
-                            {question.options.map((option, optIndex) => (
-                              <div key={optIndex} className="flex items-center gap-2">
-                                <span className="font-medium">{String.fromCharCode(65 + optIndex)}.</span>
-                                <span>{option}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                        
-                        <div className="mt-4 pt-4 border-t">
-                          <p className="text-sm text-muted-foreground">
-                            <span className="font-medium">Correct Answer:</span> {question.correctAnswer}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+      {error && <Alert variant="destructive">{error}</Alert>}
 
-              <Button 
-                onClick={handleSave} 
-                className="w-full mt-6"
-                disabled={isSaving}
-              >
-                {isSaving ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving Exam...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="mr-2 h-4 w-4" />
-                    Approve & Save Exam
-                  </>
-                )}
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+      {parsedData && (
+        <div className="space-y-2">
+          <h2 className="text-xl font-bold">Parsed Questions</h2>
+          {parsedData.questions.map((q: any, idx: number) => (
+            <Card key={idx} className="p-3 border">
+              <p className="font-semibold">Q{idx + 1}: {q.question_text}</p>
+              <p>Marks: {q.marks}</p>
+              <p>Type: {q.question_type}</p>
+              <p>Difficulty: {q.difficulty_level}</p>
+              <p>Section: {q.section || "N/A"}</p>
+            </Card>
+          ))}
+          <Button onClick={handleApproveAndSave}>
+            Approve & Save
+          </Button>
+        </div>
+      )}
+    </Card>
   );
 };
 
