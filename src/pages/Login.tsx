@@ -25,6 +25,9 @@ const Login = () => {
   };
 
   useEffect(() => {
+    // Clear previous authentication loop detection
+    localStorage.removeItem('lastAuthCheck');
+    
     if (!isLoading && isAuthenticated) {
       const redirectPath = getRedirectPath();
       console.log('Already authenticated, redirecting to:', redirectPath);
@@ -43,20 +46,30 @@ const Login = () => {
       if (username === 'admin' && password === 'password') {
         console.log('Login successful');
         
-        // Create a more realistic looking JWT token (still for demo purposes)
+        // Create a proper JWT token (still for demo purposes)
         // A real JWT has three parts separated by dots: header.payload.signature
         const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
         const payload = btoa(JSON.stringify({ 
           sub: username, 
           name: "Admin User", 
           role: "admin",
-          exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour expiration
+          // Add a unique ID to prevent caching issues
+          jti: crypto.randomUUID(),
+          // Set a more reasonable expiration time (1 hour)
+          exp: Math.floor(Date.now() / 1000) + (60 * 60) 
         }));
-        const signature = btoa("demo-signature"); // In a real JWT this would be cryptographically generated
+        const signature = btoa("demo-signature-" + Date.now()); // Add timestamp to make unique
         
         const token = `${header}.${payload}.${signature}`;
-        console.log(`Generated JWT-like token: ${token.substring(0, 15)}...`);
+        console.log(`Generated JWT token:`, token.substring(0, 20) + '...');
         
+        // Clear localStorage first to prevent any caching issues
+        localStorage.removeItem('authToken');
+        
+        // Wait a tiny bit to ensure localStorage is cleared
+        await new Promise(resolve => setTimeout(resolve, 50));
+        
+        // Now login with the new token
         await login(token);
       } else {
         console.log('Invalid credentials');
@@ -71,6 +84,13 @@ const Login = () => {
   };
 
   const toggleDebug = () => setShowDebug(!showDebug);
+
+  const clearToken = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('redirectAfterLogin');
+    toast.info('Token cleared');
+    setTimeout(() => window.location.reload(), 500);
+  };
 
   return (
     <div className="flex flex-col items-center min-h-screen p-4">
@@ -107,13 +127,22 @@ const Login = () => {
         </CardContent>
       </Card>
 
-      <Button
-        variant="ghost"
-        className="mt-4"
-        onClick={toggleDebug}
-      >
-        {showDebug ? 'Hide' : 'Show'} Debug Info
-      </Button>
+      <div className="flex gap-2 mt-4">
+        <Button
+          variant="ghost"
+          onClick={toggleDebug}
+        >
+          {showDebug ? 'Hide' : 'Show'} Debug Info
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          onClick={clearToken}
+          className="text-red-500"
+        >
+          Clear Token
+        </Button>
+      </div>
 
       {showDebug && (
         <Card className="w-full max-w-md mt-4 p-4">
@@ -126,7 +155,7 @@ const Login = () => {
               apiUrl: API_URL,
               hasToken: !!localStorage.getItem('authToken'),
               tokenPreview: localStorage.getItem('authToken') 
-                ? `${localStorage.getItem('authToken')?.substring(0, 15)}...` 
+                ? `${localStorage.getItem('authToken')?.substring(0, 20)}...` 
                 : 'none',
               timestamp: new Date().toISOString()
             }, null, 2)}

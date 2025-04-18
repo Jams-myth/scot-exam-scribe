@@ -6,13 +6,20 @@ export const API_URL = "https://preview--exam-vault-api.lovable.app";
 
 export const getAuthToken = () => {
   const token = localStorage.getItem('authToken');
-  console.log('Getting auth token:', token ? `${token.substring(0, 15)}...` : 'null');
+  console.log('Getting auth token:', token ? `${token.substring(0, 20)}...` : 'null');
   return token;
 };
 
 export const isAuthenticated = () => {
-  const isAuth = !!getAuthToken();
+  const token = getAuthToken();
+  const isAuth = !!token;
   console.log('isAuthenticated check:', isAuth);
+  
+  // Also log the token format for debugging
+  if (isAuth) {
+    console.log('Token format in isAuthenticated:', token?.substring(0, 20) + '...');
+  }
+  
   return isAuth;
 };
 
@@ -25,17 +32,28 @@ export const uploadPaper = async (file: File): Promise<UploadResponse> => {
     throw new Error("Authentication required: Please login to upload papers");
   }
   
+  // Validate token format
+  if (token.indexOf('.') === -1) {
+    console.error('Invalid token format:', token.substring(0, 20) + '...');
+    throw new Error("Invalid authentication token format. Please login again.");
+  }
+  
   try {
     // Log upload attempt details
     const uploadUrl = `${API_URL}/papers/pdf`;
     console.log('Upload API URL:', uploadUrl);
-    console.log('Auth token format check:', token.substring(0, 15) + '...');
+    console.log('Auth token format check:', token.substring(0, 20) + '...');
+    
+    // Ensure token has correct Bearer format
+    const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
     
     // Log request headers for debugging
     const headers: Record<string, string> = {
-      'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`
+      'Authorization': authHeader
     };
-    console.log('Request headers:', JSON.stringify(headers));
+    console.log('Request headers:', JSON.stringify({
+      Authorization: authHeader.substring(0, 25) + '...'
+    }));
     
     // Make the request with proper error handling
     const response = await fetch(uploadUrl, {
@@ -93,17 +111,21 @@ export const uploadPaper = async (file: File): Promise<UploadResponse> => {
   }
 };
 
+// Update other API functions to use consistent token handling
 export const savePaper = async (paper: Omit<Paper, "id">): Promise<ApiResponse<Paper>> => {
   const token = getAuthToken();
   if (!token) {
     throw new Error("Authentication required");
   }
   
+  // Ensure token has correct Bearer format
+  const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+  
   const response = await fetch(`${API_URL}/papers`, {
     method: "POST",
     headers: { 
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
+      "Authorization": authHeader
     },
     body: JSON.stringify(paper),
   });
@@ -121,11 +143,14 @@ export const saveQuestions = async (paperId: string, questions: Omit<ParsedQuest
     throw new Error("Authentication required");
   }
   
+  // Ensure token has correct Bearer format
+  const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+  
   const response = await fetch(`${API_URL}/questions`, {
     method: "POST",
     headers: { 
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
+      "Authorization": authHeader
     },
     body: JSON.stringify({ paperId, questions }),
   });
@@ -140,9 +165,14 @@ export const saveQuestions = async (paperId: string, questions: Omit<ParsedQuest
 export const fetchPapers = async (): Promise<Paper[]> => {
   const token = getAuthToken();
   
-  const response = await fetch(`${API_URL}/papers`, {
-    headers: token ? { "Authorization": `Bearer ${token}` } : {}
-  });
+  // Ensure token has correct Bearer format if it exists
+  const headers: Record<string, string> = {};
+  if (token) {
+    const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+    headers["Authorization"] = authHeader;
+  }
+  
+  const response = await fetch(`${API_URL}/papers`, { headers });
   
   if (!response.ok) throw new Error("Failed to fetch papers");
   return response.json();
@@ -151,9 +181,14 @@ export const fetchPapers = async (): Promise<Paper[]> => {
 export const fetchPaper = async (id: string): Promise<Paper> => {
   const token = getAuthToken();
   
-  const response = await fetch(`${API_URL}/papers/${id}`, {
-    headers: token ? { "Authorization": `Bearer ${token}` } : {}
-  });
+  // Ensure token has correct Bearer format if it exists
+  const headers: Record<string, string> = {};
+  if (token) {
+    const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+    headers["Authorization"] = authHeader;
+  }
+  
+  const response = await fetch(`${API_URL}/papers/${id}`, { headers });
   
   if (!response.ok) throw new Error("Failed to fetch paper");
   return response.json();

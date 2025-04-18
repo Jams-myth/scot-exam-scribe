@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { uploadPaper, savePaper, saveQuestions, getAuthToken, API_URL } from "@/services/api";
 import { useAuth } from "@/lib/hooks/useAuth";
@@ -5,14 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
-import { FilePlus, RefreshCw, Bug } from "lucide-react";
+import { FilePlus, RefreshCw, Bug, Trash2 } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ParsedQuestion } from "@/types/exam";
 
 const UploadPaper = () => {
-  const { isAuthenticated, redirectToLogin } = useAuth();
+  const { isAuthenticated, redirectToLogin, authToken } = useAuth();
   const location = useLocation();
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -20,22 +21,41 @@ const UploadPaper = () => {
   const [parsedData, setParsedData] = useState<any | null>(null);
   const [showDebug, setShowDebug] = useState(true);
   const [debugInfo, setDebugInfo] = useState<string>('');
+  const [lastNetworkRequest, setLastNetworkRequest] = useState<any>(null);
 
   useEffect(() => {
     console.log('UploadPaper - Auth check:', isAuthenticated);
     const token = getAuthToken();
-    console.log('Current token:', token ? `${token.substring(0, 15)}...` : 'No token');
+    console.log('Current token:', token ? `${token.substring(0, 20)}...` : 'No token');
     addDebugInfo(`Auth check: ${isAuthenticated ? 'Authenticated' : 'Not authenticated'}`);
     addDebugInfo(`Token exists: ${!!token}`);
     if (token) {
-      addDebugInfo(`Token format: ${token.substring(0, 15)}...`);
+      addDebugInfo(`Token format: ${token.substring(0, 20)}...`);
+      
+      // Analyze token structure
+      try {
+        const parts = token.split('.');
+        if (parts.length === 3) {
+          const payload = JSON.parse(atob(parts[1]));
+          addDebugInfo(`Token payload: ${JSON.stringify(payload)}`);
+          
+          if (payload.exp) {
+            const expDate = new Date(payload.exp * 1000);
+            addDebugInfo(`Token expires: ${expDate.toLocaleString()}`);
+          }
+        } else {
+          addDebugInfo(`WARNING: Token does not appear to be a valid JWT (${parts.length} parts)`);
+        }
+      } catch (err) {
+        addDebugInfo(`Error parsing token: ${err}`);
+      }
     }
     
     if (!isAuthenticated) {
       console.log('Not authenticated, redirecting to login');
       redirectToLogin(location.pathname);
     }
-  }, [isAuthenticated, redirectToLogin, location.pathname]);
+  }, [isAuthenticated, redirectToLogin, location.pathname, authToken]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null;
@@ -55,6 +75,11 @@ const UploadPaper = () => {
   const addDebugInfo = (info: string) => {
     const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
     setDebugInfo(prev => `${prev}\n[${timestamp}] ${info}`);
+  };
+
+  const clearDebugInfo = () => {
+    setDebugInfo('');
+    addDebugInfo('Debug log cleared');
   };
 
   const handleUpload = async () => {
@@ -79,16 +104,33 @@ const UploadPaper = () => {
     const token = getAuthToken();
     addDebugInfo(`Token check before upload: ${!!token ? 'Present' : 'Missing'}`);
     if (token) {
-      addDebugInfo(`Token format: ${token.substring(0, 15)}...`);
+      addDebugInfo(`Token format: ${token.substring(0, 20)}...`);
     }
 
     try {
       addDebugInfo(`API URL: ${API_URL}/papers/pdf`);
       
+      // Create a detailed network request object for debugging
+      const requestDetails = {
+        url: `${API_URL}/papers/pdf`,
+        method: 'POST',
+        headers: {
+          'Authorization': token ? (token.startsWith('Bearer ') ? `${token.substring(0, 25)}...` : `Bearer ${token.substring(0, 20)}...`) : 'None'
+        },
+        file: {
+          name: file.name,
+          type: file.type,
+          size: `${(file.size / 1024).toFixed(2)} KB`
+        }
+      };
+      setLastNetworkRequest(requestDetails);
+      addDebugInfo(`Request details: ${JSON.stringify(requestDetails, null, 2)}`);
+      
       addDebugInfo('Calling uploadPaper API...');
       const result = await uploadPaper(file);
       console.log('Upload successful, parsed data received:', result);
       addDebugInfo('Upload successful!');
+      addDebugInfo(`Response: ${JSON.stringify(result, null, 2).substring(0, 200)}...`);
       
       setParsedData(result);
       toast.success("Paper uploaded successfully");
@@ -173,6 +215,13 @@ const UploadPaper = () => {
     setShowDebug(!showDebug);
   };
 
+  const forceTokenRefresh = () => {
+    localStorage.removeItem('authToken');
+    addDebugInfo('Auth token forcibly removed, reloading page...');
+    toast.info('Auth token cleared, reloading page');
+    setTimeout(() => window.location.reload(), 500);
+  };
+
   if (!isAuthenticated) {
     return (
       <Card className="p-4 max-w-xl mx-auto mt-8">
@@ -212,9 +261,19 @@ const UploadPaper = () => {
         <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono overflow-auto max-h-60 border border-gray-300 dark:border-gray-700">
           <div className="flex justify-between items-center mb-2">
             <p className="font-bold">Debug Information:</p>
-            <Button variant="ghost" size="sm" onClick={() => setDebugInfo('')}>
-              Clear
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="ghost" size="sm" onClick={clearDebugInfo}>
+                Clear Log
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={forceTokenRefresh}
+                className="text-red-500"
+              >
+                <Trash2 className="h-3 w-3 mr-1" /> Reset Token
+              </Button>
+            </div>
           </div>
           <div className="space-y-1 mb-2">
             <p><strong>API URL:</strong> {API_URL}</p>
@@ -226,6 +285,16 @@ const UploadPaper = () => {
               </p>
             )}
           </div>
+          
+          {lastNetworkRequest && (
+            <>
+              <p className="font-bold mt-2">Last Request:</p>
+              <pre className="whitespace-pre-wrap bg-gray-200 dark:bg-gray-700 p-1 rounded text-xs">
+                {JSON.stringify(lastNetworkRequest, null, 2)}
+              </pre>
+            </>
+          )}
+          
           <p className="font-bold mt-2">Log:</p>
           <pre className="whitespace-pre-wrap">{debugInfo || 'No log entries yet'}</pre>
         </div>
