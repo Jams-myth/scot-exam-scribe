@@ -53,7 +53,7 @@ const Questions = () => {
             <TableHead>Question</TableHead>
             <TableHead>Type</TableHead>
             <TableHead>Points</TableHead>
-            <TableHead>Subject</TableHead>
+            <TableHead>Section</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -62,7 +62,7 @@ const Questions = () => {
               <TableCell className="font-medium">{question.text}</TableCell>
               <TableCell>{question.type}</TableCell>
               <TableCell>{question.points}</TableCell>
-              <TableCell>{question.subject}</TableCell>
+              <TableCell>{question.section || 'N/A'}</TableCell>
             </TableRow>
           ))}
         </TableBody>
