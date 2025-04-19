@@ -14,7 +14,7 @@ import Login from "./pages/Login";
 import Questions from "./pages/Questions";
 import Papers from "./pages/Papers";
 import MinimalUploadTest from "./pages/MinimalUploadTest";
-import { AuthProvider, useAuth } from "@/lib/hooks/useAuth";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { Suspense, lazy } from "react";
 
 const queryClient = new QueryClient({
@@ -116,9 +116,7 @@ const App = () => (
       <Toaster />
       <Sonner position="top-right" closeButton />
       <BrowserRouter>
-        <AuthProvider>
-          <AppRoutes />
-        </AuthProvider>
+        <AppRoutes />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

@@ -7,11 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { API_URL } from '@/services/api';
+import { loginUser } from '@/services/auth';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login, isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const [showDebug, setShowDebug] = useState(false);
   const [loginInProgress, setLoginInProgress] = useState(false);
   const navigate = useNavigate();
@@ -44,16 +45,23 @@ const Login = () => {
     console.log('Login attempt for user:', username);
     
     try {
-      // Call the login function from auth context
-      const success = await login(username, password);
+      // Use the loginUser function with the correct argument format
+      const token = await loginUser(username, password);
       
-      if (!success) {
-        setLoginInProgress(false);
-      }
-      // Note: The login function now handles redirect on success
+      // Store the token in localStorage
+      localStorage.setItem('authToken', `Bearer ${token}`);
+      
+      // Toast and redirect
+      toast.success('Login successful');
+      
+      // Redirect to the intended path
+      const redirectPath = getRedirectPath();
+      navigate(redirectPath, { replace: true });
+      
     } catch (error) {
       console.error('Login error:', error);
       toast.error(error instanceof Error ? error.message : 'Login failed');
+    } finally {
       setLoginInProgress(false);
     }
   };
