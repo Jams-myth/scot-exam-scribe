@@ -44,7 +44,7 @@ const Login = () => {
     console.log('Login attempt for user:', username);
     
     try {
-      // Using the new login function that handles token storage and redirect
+      // Call the login function from auth context
       const success = await login(username, password);
       
       if (!success) {

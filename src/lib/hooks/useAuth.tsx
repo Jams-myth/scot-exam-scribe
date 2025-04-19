@@ -6,14 +6,14 @@ import { loginUser } from '@/services/auth';
 
 const TOKEN_KEY = 'authToken';
 const REDIRECT_KEY = 'redirectAfterLogin';
-const AUTH_CHECK_INTERVAL = 30000; // Increased to reduce frequency
+const AUTH_CHECK_INTERVAL = 30000; // Check every 30 seconds
 
 // Create a context to share auth state
 const AuthContext = createContext<ReturnType<typeof useAuthProvider> | null>(null);
 
 // Main provider hook that manages authentication state
 const useAuthProvider = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -121,7 +121,7 @@ const useAuthProvider = () => {
   }, [checkAuth]);
 
   // Login function
-  const login = async (username: string, password: string) => {
+  const login = async (username: string, password: string): Promise<boolean> => {
     try {
       const token = await loginUser(username, password);
       
