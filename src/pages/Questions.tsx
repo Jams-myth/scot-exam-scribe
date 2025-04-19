@@ -1,6 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { Book } from "lucide-react";
+import { Book, Search } from "lucide-react";
 import { useState } from "react";
 import {
   Table,
@@ -10,13 +10,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
 import { fetchAllQuestions } from "@/services/api";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { ParsedQuestion } from "@/types/exam";
 
 const Questions = () => {
+  const { redirectToLogin } = useAuth();
+  const [searchTerm, setSearchTerm] = useState("");
+  
   const { data: questions, isLoading, error } = useQuery({
     queryKey: ['questions'],
     queryFn: fetchAllQuestions,
+    onError: () => {
+      redirectToLogin();
+    },
   });
+
+  // Filter questions based on search term
+  const filteredQuestions = questions?.filter(q => 
+    q.question_text?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    q.question_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    q.difficulty_level?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (isLoading) {
     return (
@@ -46,22 +62,39 @@ const Questions = () => {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">Exam Questions</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Exam Questions ({questions.length} total)</h1>
+        <div className="relative w-64">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+          <Input
+            type="text"
+            placeholder="Search questions..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-8"
+          />
+        </div>
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Question</TableHead>
             <TableHead>Type</TableHead>
             <TableHead>Points</TableHead>
+            <TableHead>Difficulty</TableHead>
             <TableHead>Section</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {questions.map((question) => (
+          {(filteredQuestions || []).map((question) => (
             <TableRow key={question.id}>
-              <TableCell className="font-medium">{question.text}</TableCell>
-              <TableCell>{question.type}</TableCell>
-              <TableCell>{question.points}</TableCell>
+              <TableCell className="font-medium max-w-xl truncate">
+                {question.question_text || question.text || 'N/A'}
+              </TableCell>
+              <TableCell>{question.question_type || question.type || 'N/A'}</TableCell>
+              <TableCell>{question.marks || question.points || 'N/A'}</TableCell>
+              <TableCell>{question.difficulty_level || 'N/A'}</TableCell>
               <TableCell>{question.section || 'N/A'}</TableCell>
             </TableRow>
           ))}

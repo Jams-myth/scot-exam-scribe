@@ -229,7 +229,7 @@ export const fetchAllQuestions = async (): Promise<ParsedQuestion[]> => {
   const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
   
   try {
-    const response = await fetch(`${API_URL}/api/v1/questions`, {
+    const response = await fetch(`${API_URL}/api/v1/questions/`, {
       headers: {
         'Authorization': authHeader,
         'Accept': 'application/json',
@@ -240,7 +240,9 @@ export const fetchAllQuestions = async (): Promise<ParsedQuestion[]> => {
       throw new Error('Failed to fetch questions');
     }
 
-    return response.json();
+    const data = await response.json();
+    console.log('Fetched questions:', data);
+    return data;
   } catch (error) {
     console.error('Error fetching questions:', error);
     throw error;
