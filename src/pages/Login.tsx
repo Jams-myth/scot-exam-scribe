@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { API_URL } from '@/services/api';
+import { API_URL, loginUser } from '@/services/api';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -25,7 +24,6 @@ const Login = () => {
   };
 
   useEffect(() => {
-    // Clear previous authentication loop detection
     localStorage.removeItem('lastAuthCheck');
     
     if (!isLoading && isAuthenticated) {
@@ -41,43 +39,20 @@ const Login = () => {
     setLoginInProgress(true);
     
     try {
-      // For demo purposes, we'll still check for admin/password,
-      // but generate a more realistic JWT-like token
-      if (username === 'admin' && password === 'password') {
-        console.log('Login successful');
-        
-        // Create a proper JWT token (still for demo purposes)
-        // A real JWT has three parts separated by dots: header.payload.signature
-        const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-        const payload = btoa(JSON.stringify({ 
-          sub: username, 
-          name: "Admin User", 
-          role: "admin",
-          // Add a unique ID to prevent caching issues
-          jti: crypto.randomUUID(),
-          // Set a more reasonable expiration time (1 hour)
-          exp: Math.floor(Date.now() / 1000) + (60 * 60) 
-        }));
-        const signature = btoa("demo-signature-" + Date.now()); // Add timestamp to make unique
-        
-        const token = `${header}.${payload}.${signature}`;
-        console.log(`Generated JWT token:`, token.substring(0, 20) + '...');
-        
-        // Clear localStorage first to prevent any caching issues
-        localStorage.removeItem('authToken');
-        
-        // Wait a tiny bit to ensure localStorage is cleared
-        await new Promise(resolve => setTimeout(resolve, 50));
-        
-        // Now login with the new token
-        await login(token);
-      } else {
-        console.log('Invalid credentials');
-        toast.error('Invalid credentials');
-      }
+      const token = await loginUser(username, password);
+      console.log('Login successful, token received');
+      
+      // Clear localStorage first to prevent any caching issues
+      localStorage.removeItem('authToken');
+      
+      // Wait a tiny bit to ensure localStorage is cleared
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Now login with the token
+      await login(token);
     } catch (error) {
       console.error('Login error:', error);
-      toast.error('Login failed');
+      toast.error(error instanceof Error ? error.message : 'Login failed');
     } finally {
       setLoginInProgress(false);
     }
