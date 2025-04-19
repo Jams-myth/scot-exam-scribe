@@ -7,12 +7,13 @@ export interface ParsedQuestion {
   section?: string;
   options?: string[];
   correctAnswer: string;
-  question_text?: string;  // Added to fix type error
-  question_type?: string;  // Added for consistency
-  marks?: number;  // Added for consistency
-  difficulty_level?: string;  // Added for consistency
-  marking_scheme?: string;  // Added for consistency
-  diagrams?: string[];  // Added for consistency
+  question_text?: string;
+  question_type?: string;
+  marks?: number;
+  difficulty_level?: string;
+  marking_scheme?: string;
+  diagrams?: string[];
+  paper_id?: string;
 }
 
 export interface Paper {
@@ -23,10 +24,11 @@ export interface Paper {
   type: string;
   duration: number;
   questions: ParsedQuestion[];
-  grade_level?: string;  // Added to fix type error
-  total_marks?: number;  // Added for consistency
-  description?: string;  // Added for consistency
-  time_limit_minutes?: number;  // Added for consistency
+  grade_level?: string;
+  total_marks?: number;
+  description?: string;
+  time_limit_minutes?: number;
+  created_at?: string;
 }
 
 export interface UploadResponse {

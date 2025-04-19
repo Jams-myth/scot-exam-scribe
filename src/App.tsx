@@ -12,6 +12,7 @@ import ExamViewer from "./pages/ExamViewer";
 import MainNav from "./components/MainNav";
 import Login from "./pages/Login";
 import Questions from "./pages/Questions";
+import Papers from "./pages/Papers";
 import MinimalUploadTest from "./pages/MinimalUploadTest";
 import { useAuth } from "@/lib/hooks/useAuth";
 
@@ -51,6 +52,14 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute>
                 <Questions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/papers"
+            element={
+              <ProtectedRoute>
+                <Papers />
               </ProtectedRoute>
             }
           />

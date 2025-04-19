@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Book, Search } from "lucide-react";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -11,19 +12,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { fetchAllQuestions } from "@/services/api";
+import { fetchAllQuestions } from "@/services/questions";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { ParsedQuestion } from "@/types/exam";
 
 const Questions = () => {
   const { redirectToLogin } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchParams] = useSearchParams();
+  const paperId = searchParams.get("paperId");
   
   const { data: questions, isLoading, error } = useQuery({
-    queryKey: ['questions'],
-    queryFn: fetchAllQuestions,
-    onError: () => {
-      redirectToLogin();
+    queryKey: ['questions', paperId],
+    queryFn: () => fetchAllQuestions(paperId || undefined),
+    meta: {
+      onError: () => {
+        redirectToLogin();
+      },
     },
   });
 
@@ -63,7 +68,9 @@ const Questions = () => {
   return (
     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Exam Questions ({questions.length} total)</h1>
+        <h1 className="text-2xl font-bold">
+          {paperId ? 'Paper Questions' : 'All Questions'} ({questions.length} total)
+        </h1>
         <div className="relative w-64">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
           <Input

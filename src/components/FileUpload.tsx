@@ -1,12 +1,15 @@
 
 import React, { useState } from 'react';
-import { FilePlus, RefreshCw } from 'lucide-react';
+import { FilePlus, RefreshCw, ExternalLink } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Alert } from './ui/alert';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 import { Paper, ParsedQuestion } from '@/types/exam';
-import { uploadPaper, savePaper, saveQuestions, API_URL } from '@/services/api';
+import { uploadPaper, savePaper } from '@/services/papers';
+import { saveQuestions } from '@/services/questions';
+import { API_URL } from '@/services/index';
 
 interface FileUploadProps {
   isAuthenticated: boolean;
@@ -19,12 +22,16 @@ const FileUpload = ({ isAuthenticated, addDebugInfo, setLastNetworkRequest }: Fi
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [parsedData, setParsedData] = useState<any | null>(null);
+  const [savedPaperId, setSavedPaperId] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null;
     if (selected && selected.type === "application/pdf" && selected.size <= 10 * 1024 * 1024) {
       setFile(selected);
       setError(null);
+      setSavedPaperId(null);
+      setSaveSuccess(false);
       addDebugInfo(`File selected: ${selected.name} (${(selected.size / 1024).toFixed(2)} KB)`);
     } else {
       setFile(null);
@@ -41,6 +48,8 @@ const FileUpload = ({ isAuthenticated, addDebugInfo, setLastNetworkRequest }: Fi
     
     setUploading(true);
     setError(null);
+    setSavedPaperId(null);
+    setSaveSuccess(false);
     
     // Update the last network request with initial details
     setLastNetworkRequest({
@@ -126,6 +135,7 @@ const FileUpload = ({ isAuthenticated, addDebugInfo, setLastNetworkRequest }: Fi
       addDebugInfo(`Saving paper to API: ${API_URL}/papers`);
       const savedPaper = await savePaper(paperData);
       const paperId = savedPaper.data.id;
+      setSavedPaperId(paperId);
       
       // Update network request with questions save operation
       setLastNetworkRequest((prev: any) => ({
@@ -157,7 +167,7 @@ const FileUpload = ({ isAuthenticated, addDebugInfo, setLastNetworkRequest }: Fi
         timestamp: new Date().toISOString()
       }));
       
-      setParsedData(null);
+      setSaveSuccess(true);
       toast.success("Paper and questions saved successfully");
     } catch (err: any) {
       // Update network request with error details
@@ -185,8 +195,39 @@ const FileUpload = ({ isAuthenticated, addDebugInfo, setLastNetworkRequest }: Fi
 
       {error && <Alert variant="destructive">{error}</Alert>}
 
+      {saveSuccess && savedPaperId && (
+        <Alert>
+          <div className="flex flex-col space-y-2">
+            <p className="font-medium text-green-600">Paper saved successfully!</p>
+            <div className="flex space-x-4 mt-2">
+              <Link to={`/questions?paperId=${savedPaperId}`}>
+                <Button size="sm" variant="outline" className="flex items-center gap-2">
+                  <ExternalLink className="h-4 w-4" />
+                  View Questions
+                </Button>
+              </Link>
+              <Link to="/papers">
+                <Button size="sm" variant="outline" className="flex items-center gap-2">
+                  <ExternalLink className="h-4 w-4" />
+                  View All Papers
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </Alert>
+      )}
+
       {parsedData && (
         <div className="space-y-2">
+          <h2 className="text-xl font-bold">Paper Details</h2>
+          <div className="p-3 border rounded space-y-1">
+            <p><strong>Title:</strong> {parsedData.title || 'N/A'}</p>
+            <p><strong>Subject:</strong> {parsedData.subject || 'N/A'}</p>
+            <p><strong>Grade Level:</strong> {parsedData.grade_level || 'N/A'}</p>
+            <p><strong>Total Marks:</strong> {parsedData.total_marks || 'N/A'}</p>
+            <p><strong>Questions:</strong> {parsedData.questions?.length || 0}</p>
+          </div>
+          
           <h2 className="text-xl font-bold">Parsed Questions</h2>
           {parsedData.questions && parsedData.questions.length > 0 ? (
             parsedData.questions.map((q: any, idx: number) => (
@@ -201,9 +242,12 @@ const FileUpload = ({ isAuthenticated, addDebugInfo, setLastNetworkRequest }: Fi
           ) : (
             <Alert>No questions found in the uploaded document.</Alert>
           )}
-          <Button onClick={handleApproveAndSave}>
-            Approve & Save
-          </Button>
+          
+          {!saveSuccess && (
+            <Button onClick={handleApproveAndSave}>
+              Approve & Save
+            </Button>
+          )}
         </div>
       )}
     </div>

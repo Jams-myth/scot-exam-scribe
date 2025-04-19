@@ -1,6 +1,8 @@
+
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
+import { isAuthenticated as checkAuth } from '@/services/auth';
 
 const TOKEN_KEY = 'authToken';
 const REDIRECT_KEY = 'redirectAfterLogin';
