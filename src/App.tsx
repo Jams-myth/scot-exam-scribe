@@ -14,9 +14,25 @@ import Login from "./pages/Login";
 import Questions from "./pages/Questions";
 import Papers from "./pages/Papers";
 import MinimalUploadTest from "./pages/MinimalUploadTest";
-import { useAuth } from "@/lib/hooks/useAuth";
+import { AuthProvider, useAuth } from "@/lib/hooks/useAuth";
+import { Suspense, lazy } from "react";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
+  },
+});
+
+// Loading component
+const LoadingScreen = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+  </div>
+);
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated, isLoading, redirectToLogin } = useAuth();
@@ -24,11 +40,7 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   
   // Show loading state
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
   
   if (!isAuthenticated) {
@@ -40,61 +52,73 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 const AppRoutes = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  // Show initial loading screen while checking auth
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+  
   return (
     <>
       <MainNav />
       <main className="min-h-[calc(100vh-64px)]">
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/questions"
-            element={
-              <ProtectedRoute>
-                <Questions />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/papers"
-            element={
-              <ProtectedRoute>
-                <Papers />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/upload"
-            element={
-              <ProtectedRoute>
-                <UploadPaper />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/upload-test"
-            element={
-              <ProtectedRoute>
-                <MinimalUploadTest />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/exams" element={<ExamBrowser />} />
-          <Route path="/exam/:examId" element={<ExamViewer />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<LoadingScreen />}>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/questions"
+              element={
+                <ProtectedRoute>
+                  <Questions />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/papers"
+              element={
+                <ProtectedRoute>
+                  <Papers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/upload"
+              element={
+                <ProtectedRoute>
+                  <UploadPaper />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/upload-test"
+              element={
+                <ProtectedRoute>
+                  <MinimalUploadTest />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/exams" element={<ExamBrowser />} />
+            <Route path="/exam/:examId" element={<ExamViewer />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </main>
     </>
   );
 };
 
+// Main App component
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
-      <Sonner />
+      <Sonner position="top-right" closeButton />
       <BrowserRouter>
-        <AppRoutes />
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

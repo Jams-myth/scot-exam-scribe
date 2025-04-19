@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { API_URL, loginUser } from '@/services/api';
+import { API_URL } from '@/services/api';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -19,45 +19,41 @@ const Login = () => {
 
   const getRedirectPath = () => {
     const urlParams = new URLSearchParams(location.search);
-    const redirectPath = urlParams.get('redirect') || localStorage.getItem('redirectAfterLogin') || '/';
-    console.log('Login - Redirect path:', redirectPath);
+    const redirectPath = urlParams.get('redirect') || localStorage.getItem('redirectAfterLogin') || '/questions';
     return redirectPath;
   };
 
   useEffect(() => {
-    localStorage.removeItem('lastAuthCheck');
-    
-    if (!isLoading && isAuthenticated) {
+    // If already authenticated, redirect to destination path
+    // This includes a check to prevent unnecessary effect runs
+    if (isAuthenticated && !isLoading && !loginInProgress) {
       const redirectPath = getRedirectPath();
       console.log('Already authenticated, redirecting to:', redirectPath);
+      
+      // Use replace to prevent back button from returning to login
       navigate(redirectPath, { replace: true });
     }
-  }, [isAuthenticated, isLoading, navigate, location]);
+  }, [isAuthenticated, isLoading, navigate, loginInProgress]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login attempt for user:', username);
+    
+    if (loginInProgress) return;
+    
     setLoginInProgress(true);
+    console.log('Login attempt for user:', username);
     
     try {
-      const token = await loginUser(username, password);
-      console.log('Login successful, received token:', token?.substring(0, 20) + '...');
+      // Using the new login function that handles token storage and redirect
+      const success = await login(username, password);
       
-      // Clear localStorage first
-      localStorage.removeItem('authToken');
-      
-      // Format token properly and save it
-      const formattedToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
-      localStorage.setItem('authToken', formattedToken);
-      
-      // Update auth state
-      await login(formattedToken);
-      
-      toast.success('Login successful');
+      if (!success) {
+        setLoginInProgress(false);
+      }
+      // Note: The login function now handles redirect on success
     } catch (error) {
       console.error('Login error:', error);
       toast.error(error instanceof Error ? error.message : 'Login failed');
-    } finally {
       setLoginInProgress(false);
     }
   };
@@ -70,6 +66,15 @@ const Login = () => {
     toast.info('Token cleared');
     setTimeout(() => window.location.reload(), 500);
   };
+
+  // Show loading indicator while checking auth state
+  if (isLoading && !loginInProgress) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center min-h-screen p-4">
@@ -87,6 +92,7 @@ const Login = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required 
+                disabled={loginInProgress}
               />
             </div>
             <div>
@@ -97,10 +103,22 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required 
+                disabled={loginInProgress}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading || loginInProgress}>
-              {loginInProgress ? 'Logging in...' : isLoading ? 'Loading...' : 'Login'}
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isLoading || loginInProgress}
+            >
+              {loginInProgress ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                  <span>Logging in...</span>
+                </div>
+              ) : (
+                'Login'
+              )}
             </Button>
           </form>
         </CardContent>
@@ -129,6 +147,7 @@ const Login = () => {
             {JSON.stringify({
               isAuthenticated,
               isLoading,
+              loginInProgress,
               redirectPath: getRedirectPath(),
               currentPath: location.pathname,
               apiUrl: API_URL,

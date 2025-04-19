@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Book, Upload, Home, ListOrdered, File, LogOut } from "lucide-react";
+import { Book, Upload, Home, ListOrdered, File, LogOut, LogIn } from "lucide-react";
 
 import {
   NavigationMenu,
@@ -14,22 +14,24 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { toast } from "sonner";
-import { logout } from "@/services/auth";
 
 const MainNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, logout: clearAuthState } = useAuth();
+  const { isAuthenticated, isLoading, logout } = useAuth();
   
   const isActive = (path: string) => {
     return location.pathname === path;
   };
 
-  const handleLogout = () => {
-    logout(); // Clear localStorage token
-    clearAuthState(); // Reset auth state
-    toast.success("Logged out successfully");
-    navigate("/login");
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    logout();
+  };
+
+  const handleLogin = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate('/login');
   };
 
   return (
@@ -44,73 +46,65 @@ const MainNav = () => {
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
-                <Link to="/">
-                  <NavigationMenuLink 
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      isActive("/") && "bg-accent text-accent-foreground"
-                    )}
-                  >
-                    <Home className="mr-2 h-4 w-4" />
-                    Home
-                  </NavigationMenuLink>
+                <Link to="/" className={navigationMenuTriggerStyle()}>
+                  <Home className="mr-2 h-4 w-4" />
+                  Home
                 </Link>
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <Link to="/papers">
-                  <NavigationMenuLink 
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      isActive("/papers") && "bg-accent text-accent-foreground"
-                    )}
-                  >
-                    <File className="mr-2 h-4 w-4" />
-                    Papers
-                  </NavigationMenuLink>
+                <Link to="/papers" className={cn(
+                  navigationMenuTriggerStyle(),
+                  isActive("/papers") && "bg-accent text-accent-foreground"
+                )}>
+                  <File className="mr-2 h-4 w-4" />
+                  Papers
                 </Link>
               </NavigationMenuItem>
               
               <NavigationMenuItem>
-                <Link to="/questions">
-                  <NavigationMenuLink 
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      isActive("/questions") && "bg-accent text-accent-foreground"
-                    )}
-                  >
-                    <ListOrdered className="mr-2 h-4 w-4" />
-                    Questions
-                  </NavigationMenuLink>
+                <Link to="/questions" className={cn(
+                  navigationMenuTriggerStyle(),
+                  isActive("/questions") && "bg-accent text-accent-foreground"
+                )}>
+                  <ListOrdered className="mr-2 h-4 w-4" />
+                  Questions
                 </Link>
               </NavigationMenuItem>
               
               <NavigationMenuItem>
-                <Link to="/upload">
-                  <NavigationMenuLink 
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      isActive("/upload") && "bg-accent text-accent-foreground"
-                    )}
-                  >
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload Paper
-                  </NavigationMenuLink>
+                <Link to="/upload" className={cn(
+                  navigationMenuTriggerStyle(),
+                  isActive("/upload") && "bg-accent text-accent-foreground"
+                )}>
+                  <Upload className="mr-2 h-4 w-4" />
+                  Upload Paper
                 </Link>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
         </div>
         
-        {isAuthenticated && (
-          <Button 
-            variant="ghost" 
-            onClick={handleLogout} 
-            className="flex items-center gap-2"
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </Button>
+        {!isLoading && (
+          isAuthenticated ? (
+            <Button 
+              variant="ghost" 
+              onClick={handleLogout} 
+              className="flex items-center gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
+          ) : (
+            <Button 
+              variant="ghost" 
+              onClick={handleLogin} 
+              className="flex items-center gap-2"
+            >
+              <LogIn className="h-4 w-4" />
+              Login
+            </Button>
+          )
         )}
       </div>
     </header>

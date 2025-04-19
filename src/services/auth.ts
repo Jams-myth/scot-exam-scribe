@@ -3,21 +3,12 @@ import { API_URL } from './index';
 
 export const getAuthToken = () => {
   const token = localStorage.getItem('authToken');
-  console.log('Getting auth token:', token ? `${token.substring(0, 20)}...` : 'null');
   return token;
 };
 
 export const isAuthenticated = () => {
   const token = getAuthToken();
-  const isAuth = !!token;
-  console.log('isAuthenticated check:', isAuth);
-  
-  // Also log the token format for debugging
-  if (isAuth) {
-    console.log('Token format in isAuthenticated:', token?.substring(0, 20) + '...');
-  }
-  
-  return isAuth;
+  return !!token;
 };
 
 export const loginUser = async (username: string, password: string) => {
@@ -26,6 +17,8 @@ export const loginUser = async (username: string, password: string) => {
     const formData = new URLSearchParams();
     formData.append('username', username);
     formData.append('password', password);
+    
+    console.log(`Attempting login for user: ${username} to ${API_URL}/api/v1/auth/login/access-token`);
     
     const response = await fetch(`${API_URL}/api/v1/auth/login/access-token`, {
       method: 'POST',
@@ -37,17 +30,18 @@ export const loginUser = async (username: string, password: string) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Login error response:', errorText);
+      console.error('Login response error:', response.status, errorText);
+      
       try {
         const errorData = JSON.parse(errorText);
         throw new Error(errorData.message || errorData.detail || 'Login failed');
       } catch (parseError) {
-        throw new Error(`Login failed: ${response.statusText}`);
+        throw new Error(`Login failed (${response.status}): ${response.statusText}`);
       }
     }
 
     const data = await response.json();
-    console.log('Login response:', data);
+    console.log('Login successful, received token');
     
     // Extract the access_token from the response
     if (!data.access_token) {
@@ -64,5 +58,4 @@ export const loginUser = async (username: string, password: string) => {
 export const logout = () => {
   localStorage.removeItem('authToken');
   localStorage.removeItem('redirectAfterLogin');
-  console.log('Logged out, auth token removed');
 };
