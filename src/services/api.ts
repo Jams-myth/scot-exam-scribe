@@ -123,7 +123,6 @@ export const uploadPaper = async (file: File): Promise<UploadResponse> => {
   }
 };
 
-// Update other API functions to use consistent token handling
 export const savePaper = async (paper: Omit<Paper, "id">): Promise<ApiResponse<Paper>> => {
   const token = getAuthToken();
   if (!token) {
@@ -177,17 +176,31 @@ export const saveQuestions = async (paperId: string, questions: Omit<ParsedQuest
 export const fetchPapers = async (): Promise<Paper[]> => {
   const token = getAuthToken();
   
-  // Ensure token has correct Bearer format if it exists
-  const headers: Record<string, string> = {};
-  if (token) {
-    const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
-    headers["Authorization"] = authHeader;
+  try {
+    console.log('Fetching papers from:', `${API_URL}/api/v1/papers`);
+    
+    const headers: Record<string, string> = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    };
+
+    // Add authorization header if token exists
+    if (token) {
+      const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+      headers['Authorization'] = authHeader;
+    }
+
+    const response = await fetch(`${API_URL}/api/v1/papers`, { headers });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching papers:', error);
+    throw new Error('Failed to load exams. Please try again.');
   }
-  
-  const response = await fetch(`${API_URL}/papers`, { headers });
-  
-  if (!response.ok) throw new Error("Failed to fetch papers");
-  return response.json();
 };
 
 export const fetchPaper = async (id: string): Promise<Paper> => {
