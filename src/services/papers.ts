@@ -18,15 +18,23 @@ export const fetchPapers = async (): Promise<Paper[]> => {
     if (token) {
       const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
       headers['Authorization'] = authHeader;
+      console.log('Using auth token format:', authHeader.substring(0, 20) + '...');
+    } else {
+      console.warn('No auth token available for papers fetch');
     }
 
     const response = await fetch(`${API_URL}/api/v1/papers/`, { headers });
     
     if (!response.ok) {
+      console.error('Papers API error:', response.status, response.statusText);
+      const errorText = await response.text();
+      console.error('Error response body:', errorText);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
-    return response.json();
+    const data = await response.json();
+    console.log('Papers data received:', data);
+    return data;
   } catch (error) {
     console.error('Error fetching papers:', error);
     throw new Error('Failed to load exams. Please try again.');

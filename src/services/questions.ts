@@ -18,6 +18,9 @@ export const fetchAllQuestions = async (paperId?: string): Promise<ParsedQuestio
       url += `?paper_id=${paperId}`;
     }
     
+    console.log('Fetching questions from URL:', url);
+    console.log('Using auth token format:', authHeader.substring(0, 20) + '...');
+    
     const response = await fetch(url, {
       headers: {
         'Authorization': authHeader,
@@ -26,7 +29,10 @@ export const fetchAllQuestions = async (paperId?: string): Promise<ParsedQuestio
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch questions');
+      console.error('Questions API error:', response.status, response.statusText);
+      const errorText = await response.text();
+      console.error('Error response body:', errorText);
+      throw new Error(`Failed to fetch questions: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
