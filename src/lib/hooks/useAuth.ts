@@ -150,7 +150,7 @@ export const useAuth = () => {
     navigate('/login', { replace: true });
   };
 
-  const redirectToLogin = (from: string = '/') => {
+  const redirectToLogin = (from: string = location.pathname) => {
     if (location.pathname !== '/login') {
       console.log('Saving redirect path:', from);
       localStorage.setItem(REDIRECT_KEY, from);

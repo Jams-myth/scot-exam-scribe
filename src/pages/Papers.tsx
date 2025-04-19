@@ -35,8 +35,11 @@ const Papers = () => {
     queryKey: ['papers'],
     queryFn: fetchPapers,
     meta: {
-      onError: () => {
-        redirectToLogin();
+      onError: (error: any) => {
+        console.error("Papers fetch error:", error);
+        if (error.message && error.message.includes("Authentication")) {
+          redirectToLogin();
+        }
       },
     },
   });
@@ -63,8 +66,10 @@ const Papers = () => {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[200px] gap-4">
-        <Book className="h-12 w-12 text-gray-400" />
-        <p className="text-gray-600">Failed to load papers. Please try again later.</p>
+        <Book className="h-12 w-12 text-red-400" />
+        <p className="text-red-600">Failed to load papers. Please try again later.</p>
+        <p className="text-gray-500 text-sm">{(error as Error).message}</p>
+        <Button onClick={() => window.location.reload()}>Retry</Button>
       </div>
     );
   }
@@ -73,7 +78,7 @@ const Papers = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[200px] gap-4">
         <Book className="h-12 w-12 text-gray-400" />
-        <p className="text-gray-600">No papers available.</p>
+        <p className="text-gray-600">No papers available yet.</p>
         <Link to="/upload">
           <Button>Upload New Paper</Button>
         </Link>
