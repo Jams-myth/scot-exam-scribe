@@ -26,15 +26,15 @@ const ExamBrowser = () => {
     queryKey: ["exams"],
     queryFn: fetchPapers,
     retry: 2,
-    onSettled: (data, error) => {
-      if (error) {
+    meta: {
+      onError: (error: Error) => {
         toast({
           variant: "destructive",
           title: "Error",
           description: error instanceof Error ? error.message : "Failed to load exams"
         });
-      }
-    },
+      },
+    }
   });
 
   const filteredExams = exams.filter(exam =>
