@@ -26,12 +26,14 @@ const ExamBrowser = () => {
     queryKey: ["exams"],
     queryFn: fetchPapers,
     retry: 2,
-    onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to load exams"
-      });
+    onSettled: (data, error) => {
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error instanceof Error ? error.message : "Failed to load exams"
+        });
+      }
     },
   });
 
@@ -102,11 +104,6 @@ const ExamBrowser = () => {
                 <div className="text-sm text-gray-600">
                   Questions: {exam.questions.length}
                 </div>
-                {exam.created_at && (
-                  <div className="text-sm text-gray-600">
-                    Created: {new Date(exam.created_at).toLocaleDateString()}
-                  </div>
-                )}
               </CardContent>
               <CardFooter>
                 <Button 
