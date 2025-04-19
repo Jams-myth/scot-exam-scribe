@@ -33,7 +33,7 @@ const Login = () => {
       // Use replace to prevent back button from returning to login
       navigate(redirectPath, { replace: true });
     }
-  }, [isAuthenticated, isLoading, navigate, loginInProgress]);
+  }, [isAuthenticated, isLoading, navigate, loginInProgress, location.search]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
