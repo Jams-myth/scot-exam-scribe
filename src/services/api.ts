@@ -219,6 +219,33 @@ export const fetchPaper = async (id: string): Promise<Paper> => {
   return response.json();
 };
 
+export const fetchAllQuestions = async (): Promise<ParsedQuestion[]> => {
+  const token = getAuthToken();
+  if (!token) {
+    throw new Error("Authentication required");
+  }
+
+  const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+  
+  try {
+    const response = await fetch(`${API_URL}/api/v1/questions`, {
+      headers: {
+        'Authorization': authHeader,
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch questions');
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching questions:', error);
+    throw error;
+  }
+};
+
 export const loginUser = async (username: string, password: string) => {
   try {
     const response = await fetch(`${API_URL}/api/v1/auth/login`, {

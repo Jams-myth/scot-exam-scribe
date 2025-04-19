@@ -1,7 +1,6 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Book, Upload, Home } from "lucide-react";
+import { Book, Upload, Home, ListOrdered } from "lucide-react";
 
 import {
   NavigationMenu,
@@ -67,6 +66,20 @@ const MainNav = () => {
                 >
                   <Upload className="mr-2 h-4 w-4" />
                   Upload Paper
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <Link to="/questions">
+                <NavigationMenuLink 
+                  className={cn(
+                    navigationMenuTriggerStyle(),
+                    isActive("/questions") && "bg-accent text-accent-foreground"
+                  )}
+                >
+                  <ListOrdered className="mr-2 h-4 w-4" />
+                  Questions
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>

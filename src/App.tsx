@@ -11,6 +11,7 @@ import ExamBrowser from "./pages/ExamBrowser";
 import ExamViewer from "./pages/ExamViewer";
 import MainNav from "./components/MainNav";
 import Login from "./pages/Login";
+import Questions from "./pages/Questions";
 import MinimalUploadTest from "./pages/MinimalUploadTest";
 import { useAuth } from "@/lib/hooks/useAuth";
 
@@ -45,6 +46,14 @@ const AppRoutes = () => {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
+          <Route
+            path="/questions"
+            element={
+              <ProtectedRoute>
+                <Questions />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/upload"
             element={
