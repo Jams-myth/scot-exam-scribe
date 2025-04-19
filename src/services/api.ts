@@ -1,3 +1,4 @@
+
 import { Paper, ParsedQuestion, UploadResponse, ApiResponse } from "@/types/exam";
 
 // Update API base URL to point to the correct backend
@@ -248,20 +249,38 @@ export const fetchAllQuestions = async (): Promise<ParsedQuestion[]> => {
 
 export const loginUser = async (username: string, password: string) => {
   try {
-    const response = await fetch(`${API_URL}/api/v1/auth/login`, {
+    // Format payload as x-www-form-urlencoded
+    const formData = new URLSearchParams();
+    formData.append('username', username);
+    formData.append('password', password);
+    
+    const response = await fetch(`${API_URL}/api/v1/auth/login/access-token`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify({ username, password }),
+      body: formData.toString(),
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Login failed');
+      const errorText = await response.text();
+      console.error('Login error response:', errorText);
+      try {
+        const errorData = JSON.parse(errorText);
+        throw new Error(errorData.message || errorData.detail || 'Login failed');
+      } catch (parseError) {
+        throw new Error(`Login failed: ${response.statusText}`);
+      }
     }
 
     const data = await response.json();
+    console.log('Login response:', data);
+    
+    // Extract the access_token from the response
+    if (!data.access_token) {
+      throw new Error('Invalid response format: missing access token');
+    }
+    
     return data.access_token;
   } catch (error) {
     console.error('Login error:', error);
