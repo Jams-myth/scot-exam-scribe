@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -40,16 +41,19 @@ const Login = () => {
     
     try {
       const token = await loginUser(username, password);
-      console.log('Login successful, token received');
+      console.log('Login successful, received token:', token?.substring(0, 20) + '...');
       
-      // Clear localStorage first to prevent any caching issues
+      // Clear localStorage first
       localStorage.removeItem('authToken');
       
-      // Wait a tiny bit to ensure localStorage is cleared
-      await new Promise(resolve => setTimeout(resolve, 50));
+      // Format token properly and save it
+      const formattedToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+      localStorage.setItem('authToken', formattedToken);
       
-      // Now login with the token
-      await login(token);
+      // Update auth state
+      await login(formattedToken);
+      
+      toast.success('Login successful');
     } catch (error) {
       console.error('Login error:', error);
       toast.error(error instanceof Error ? error.message : 'Login failed');

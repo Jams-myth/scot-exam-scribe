@@ -1,11 +1,10 @@
-
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const TOKEN_KEY = 'authToken';
 const REDIRECT_KEY = 'redirectAfterLogin';
-const AUTH_CHECK_INTERVAL = 10000; // Check auth every 10 seconds
+const AUTH_CHECK_INTERVAL = 10000;
 
 export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -16,22 +15,19 @@ export const useAuth = () => {
   const checkTimeoutRef = useRef<number | null>(null);
   const lastCheckRef = useRef<number>(0);
 
-  // Check if token is valid and not expired
   const validateToken = useCallback((token: string): boolean => {
     if (!token) return false;
     
     try {
-      // For a JWT token, we extract the payload and check expiration
       const parts = token.split('.');
       if (parts.length !== 3) {
-        console.warn('Invalid token format (not three parts):', token.substring(0, 15) + '...');
+        console.warn('Invalid token format:', token.substring(0, 20) + '...');
         return false;
       }
       
       const payload = JSON.parse(atob(parts[1]));
       const now = Math.floor(Date.now() / 1000);
       
-      // Check if token is expired
       if (payload.exp && payload.exp < now) {
         console.warn('Token expired at:', new Date(payload.exp * 1000).toISOString());
         return false;
@@ -45,14 +41,12 @@ export const useAuth = () => {
   }, []);
 
   const checkAuth = useCallback(() => {
-    // Prevent too frequent checks (at least 1 second between checks)
     const now = Date.now();
     if (now - lastCheckRef.current < 1000) {
       return;
     }
     lastCheckRef.current = now;
     
-    // Clear any pending timeout to avoid multiple checks
     if (checkTimeoutRef.current) {
       window.clearTimeout(checkTimeoutRef.current);
       checkTimeoutRef.current = null;
@@ -62,23 +56,18 @@ export const useAuth = () => {
     
     try {
       const token = localStorage.getItem(TOKEN_KEY);
+      console.log('Checking auth token:', token ? `${token.substring(0, 20)}...` : 'none');
       
       if (!token) {
-        console.log('Auth check: No token found');
         setIsAuthenticated(false);
         setAuthToken(null);
         return;
       }
       
-      const isValid = validateToken(token);
-      console.log('Auth check: Token valid =', isValid);
-      
-      if (isValid) {
-        console.log('Token format check:', token.substring(0, 20) + '...');
+      if (validateToken(token)) {
         setIsAuthenticated(true);
         setAuthToken(token);
       } else {
-        console.log('Token invalid, removing...');
         localStorage.removeItem(TOKEN_KEY);
         setIsAuthenticated(false);
         setAuthToken(null);
@@ -91,18 +80,12 @@ export const useAuth = () => {
     } finally {
       setIsLoading(false);
       
-      // Schedule next check
-      checkTimeoutRef.current = window.setTimeout(() => {
-        checkAuth();
-      }, AUTH_CHECK_INTERVAL);
+      checkTimeoutRef.current = window.setTimeout(checkAuth, AUTH_CHECK_INTERVAL);
     }
   }, [validateToken]);
-  
+
   useEffect(() => {
-    // Initial auth check
     checkAuth();
-    
-    // Cleanup on unmount
     return () => {
       if (checkTimeoutRef.current) {
         window.clearTimeout(checkTimeoutRef.current);
@@ -133,17 +116,13 @@ export const useAuth = () => {
       
       console.log('Setting auth token:', finalToken.substring(0, 20) + '...');
       
-      // Clear existing token first
       localStorage.removeItem(TOKEN_KEY);
       
-      // Set the new token
       localStorage.setItem(TOKEN_KEY, finalToken);
       
-      // Update state
       setAuthToken(finalToken);
       setIsAuthenticated(true);
       
-      // Add delay to prevent race conditions
       await new Promise(resolve => setTimeout(resolve, 200));
       
       const redirectTo = localStorage.getItem(REDIRECT_KEY) || '/';
@@ -152,7 +131,6 @@ export const useAuth = () => {
       localStorage.removeItem(REDIRECT_KEY);
       toast.success('Login successful, redirecting...');
       
-      // Use history replace to avoid back button issues
       navigate(redirectTo, { replace: true });
     } catch (error) {
       console.error('Login error:', error);
