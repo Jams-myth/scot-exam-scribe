@@ -16,6 +16,10 @@ import Papers from "./pages/Papers";
 import MinimalUploadTest from "./pages/MinimalUploadTest";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Suspense, lazy } from "react";
+import { useAdmin } from "./lib/hooks/useAdmin";
+
+// Import the admin upload exams page
+const UploadExams = lazy(() => import("./pages/admin/UploadExams"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,6 +50,31 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   if (!isAuthenticated) {
     redirectToLogin(location.pathname);
     return null;
+  }
+  
+  return children;
+};
+
+// Admin protected route component
+const AdminRoute = ({ children }: { children: JSX.Element }) => {
+  const { isAdmin, isCheckingAdmin } = useAdmin();
+  const { isAuthenticated, isLoading, redirectToLogin } = useAuth();
+  const navigate = useLocation();
+  
+  // Show loading state for both auth and admin checks
+  if (isLoading || isCheckingAdmin) {
+    return <LoadingScreen />;
+  }
+  
+  // Check authentication first
+  if (!isAuthenticated) {
+    redirectToLogin(navigate.pathname);
+    return null;
+  }
+  
+  // Then check admin status
+  if (!isAdmin) {
+    return <Navigate to="/" replace />;
   }
   
   return children;
@@ -97,6 +126,15 @@ const AppRoutes = () => {
                 <ProtectedRoute>
                   <MinimalUploadTest />
                 </ProtectedRoute>
+              }
+            />
+            {/* Admin routes */}
+            <Route
+              path="/admin/upload-exams"
+              element={
+                <AdminRoute>
+                  <UploadExams />
+                </AdminRoute>
               }
             />
             <Route path="/exams" element={<ExamBrowser />} />

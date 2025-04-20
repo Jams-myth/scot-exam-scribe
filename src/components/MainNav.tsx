@@ -1,111 +1,81 @@
 
-import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Book, Upload, Home, ListOrdered, File, LogOut, LogIn } from "lucide-react";
-
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
+import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { useAuth } from "@/lib/hooks/useAuth";
-import { toast } from "sonner";
+import { useAuth } from "@/lib/hooks/useAuth"; 
+import { useAdmin } from "@/lib/hooks/useAdmin";
 
 const MainNav = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { isAuthenticated, isLoading, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
+  const { isAdmin } = useAdmin();
   
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
-
-  const handleLogout = (e: React.MouseEvent) => {
-    e.preventDefault();
-    logout();
-  };
-
-  const handleLogin = (e: React.MouseEvent) => {
-    e.preventDefault();
-    navigate('/login');
-  };
-
   return (
-    <header className="border-b">
-      <div className="container mx-auto flex h-16 items-center px-4 justify-between">
-        <div className="flex items-center">
-          <Link to="/" className="flex items-center space-x-2 mr-8">
-            <Book className="h-6 w-6" />
-            <span className="font-bold text-xl">Scot Exam Scribe</span>
-          </Link>
-          
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <Link to="/" className={navigationMenuTriggerStyle()}>
-                  <Home className="mr-2 h-4 w-4" />
-                  Home
-                </Link>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <Link to="/papers" className={cn(
-                  navigationMenuTriggerStyle(),
-                  isActive("/papers") && "bg-accent text-accent-foreground"
-                )}>
-                  <File className="mr-2 h-4 w-4" />
-                  Papers
-                </Link>
-              </NavigationMenuItem>
-              
-              <NavigationMenuItem>
-                <Link to="/questions" className={cn(
-                  navigationMenuTriggerStyle(),
-                  isActive("/questions") && "bg-accent text-accent-foreground"
-                )}>
-                  <ListOrdered className="mr-2 h-4 w-4" />
-                  Questions
-                </Link>
-              </NavigationMenuItem>
-              
-              <NavigationMenuItem>
-                <Link to="/upload" className={cn(
-                  navigationMenuTriggerStyle(),
-                  isActive("/upload") && "bg-accent text-accent-foreground"
-                )}>
-                  <Upload className="mr-2 h-4 w-4" />
-                  Upload Paper
-                </Link>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-        </div>
-        
-        {!isLoading && (
-          isAuthenticated ? (
-            <Button 
-              variant="ghost" 
-              onClick={handleLogout} 
-              className="flex items-center gap-2"
-            >
-              <LogOut className="h-4 w-4" />
+    <header className="border-b bg-background">
+      <div className="container flex h-16 items-center justify-between">
+        <nav className="flex gap-6 items-center">
+          <NavLink to="/" className="text-lg font-bold">
+            Exam Vault
+          </NavLink>
+          <NavLink
+            to="/exams"
+            className={({ isActive }) =>
+              isActive ? "text-foreground font-medium" : "text-muted-foreground"
+            }
+          >
+            Browse Exams
+          </NavLink>
+          {isAuthenticated && (
+            <>
+              <NavLink
+                to="/questions"
+                className={({ isActive }) =>
+                  isActive ? "text-foreground font-medium" : "text-muted-foreground"
+                }
+              >
+                Questions
+              </NavLink>
+              <NavLink
+                to="/papers"
+                className={({ isActive }) =>
+                  isActive ? "text-foreground font-medium" : "text-muted-foreground"
+                }
+              >
+                Papers
+              </NavLink>
+              <NavLink
+                to="/upload"
+                className={({ isActive }) =>
+                  isActive ? "text-foreground font-medium" : "text-muted-foreground"
+                }
+              >
+                Upload
+              </NavLink>
+              {/* Admin-only navigation items */}
+              {isAdmin && (
+                <NavLink
+                  to="/admin/upload-exams"
+                  className={({ isActive }) =>
+                    isActive 
+                      ? "text-foreground font-medium bg-purple-100 px-3 py-1 rounded-md" 
+                      : "text-purple-700 bg-purple-50 px-3 py-1 rounded-md hover:bg-purple-100"
+                  }
+                >
+                  Admin: Upload Exams
+                </NavLink>
+              )}
+            </>
+          )}
+        </nav>
+        <div>
+          {isAuthenticated ? (
+            <Button variant="outline" onClick={logout}>
               Logout
             </Button>
           ) : (
-            <Button 
-              variant="ghost" 
-              onClick={handleLogin} 
-              className="flex items-center gap-2"
-            >
-              <LogIn className="h-4 w-4" />
-              Login
+            <Button variant="outline" asChild>
+              <NavLink to="/login">Login</NavLink>
             </Button>
-          )
-        )}
+          )}
+        </div>
       </div>
     </header>
   );
