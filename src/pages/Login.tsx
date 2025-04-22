@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,15 @@ const Login = () => {
     const checkApiStatus = async () => {
       try {
         setApiStatus('checking');
+        // Use a more reliable endpoint for health checks
         const response = await fetch(`${API_URL}/health`, { 
           method: 'GET',
           headers: { 'Accept': 'application/json' },
+          // Add timeout to avoid long waits
+          signal: AbortSignal.timeout(5000)
         });
         setApiStatus(response.ok ? 'online' : 'offline');
+        console.log(`API health check result: ${response.ok ? 'online' : 'offline'}`);
       } catch (error) {
         console.error('API status check failed:', error);
         setApiStatus('offline');
@@ -51,6 +56,11 @@ const Login = () => {
     };
     
     checkApiStatus();
+    
+    // Periodically check API status
+    const intervalId = setInterval(checkApiStatus, 30000); // Check every 30 seconds
+    
+    return () => clearInterval(intervalId);
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
