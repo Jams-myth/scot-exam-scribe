@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { API_URL } from '@/services/api';
 import { loginUser } from '@/services/auth';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
+import { AlertTriangle } from 'lucide-react';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -29,17 +28,13 @@ const Login = () => {
   };
 
   useEffect(() => {
-    // If already authenticated, redirect to destination path
     if (isAuthenticated && !isLoading && !loginInProgress) {
       const redirectPath = getRedirectPath();
       console.log('Already authenticated, redirecting to:', redirectPath);
-      
-      // Use replace to prevent back button from returning to login
       navigate(redirectPath, { replace: true });
     }
   }, [isAuthenticated, isLoading, navigate, loginInProgress, location.search]);
   
-  // Check API status on component mount
   useEffect(() => {
     const checkApiStatus = async () => {
       try {
@@ -68,16 +63,12 @@ const Login = () => {
     console.log('Login attempt for user:', username);
     
     try {
-      // Use the loginUser function with the correct argument format
       const token = await loginUser(username, password);
       
-      // Store the token in localStorage
       localStorage.setItem('authToken', `Bearer ${token}`);
       
-      // Toast and redirect
       toast.success('Login successful');
       
-      // Redirect to the intended path
       const redirectPath = getRedirectPath();
       navigate(redirectPath, { replace: true });
       
@@ -100,7 +91,6 @@ const Login = () => {
     setTimeout(() => window.location.reload(), 500);
   };
 
-  // Show loading indicator while checking auth state
   if (isLoading && !loginInProgress) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -118,7 +108,7 @@ const Login = () => {
         <CardContent>
           {apiStatus === 'offline' && (
             <Alert variant="destructive" className="mb-4">
-              <ExclamationTriangleIcon className="h-4 w-4" />
+              <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
                 API server appears to be offline or unreachable. Login may not work until the server is available.
               </AlertDescription>
@@ -127,7 +117,7 @@ const Login = () => {
           
           {loginError && (
             <Alert variant="destructive" className="mb-4">
-              <ExclamationTriangleIcon className="h-4 w-4" />
+              <AlertTriangle className="h-4 w-4" />
               <AlertDescription>{loginError}</AlertDescription>
             </Alert>
           )}
