@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -9,6 +10,7 @@ import { ApiStatus } from '@/components/auth/ApiStatus';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { LoginDebugInfo } from '@/components/auth/LoginDebugInfo';
 import { useApiStatus } from '@/hooks/useApiStatus';
+import { Button } from '@/components/ui/button';
 
 const Login = () => {
   const [username, setUsername] = useState('');
