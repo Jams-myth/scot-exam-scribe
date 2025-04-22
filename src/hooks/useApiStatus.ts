@@ -9,20 +9,78 @@ export const useApiStatus = () => {
     const checkApiStatus = async () => {
       try {
         setApiStatus('checking');
-        const response = await fetch(`${API_URL}/health`, { 
-          method: 'GET',
-          headers: { 'Accept': 'application/json' },
-          signal: AbortSignal.timeout(5000)
-        });
-        setApiStatus(response.ok ? 'online' : 'offline');
-        console.log(`API health check result: ${response.ok ? 'online' : 'offline'}`);
+        
+        // Try multiple endpoints to confirm API status
+        const healthEndpoint = `${API_URL}/health`;
+        const fallbackEndpoint = `${API_URL}/api/v1/health`;
+        
+        console.log(`Checking API status at: ${healthEndpoint}`);
+        
+        // Use AbortController to prevent hanging requests
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+        
+        try {
+          const response = await fetch(healthEndpoint, { 
+            method: 'GET',
+            headers: { 'Accept': 'application/json' },
+            signal: controller.signal,
+            // Don't include credentials to avoid CORS preflight
+            mode: 'cors',
+            cache: 'no-cache',
+          });
+          
+          clearTimeout(timeoutId);
+          
+          if (response.ok) {
+            console.log('API health check succeeded');
+            setApiStatus('online');
+            return;
+          }
+          
+          console.log(`API health check failed with status: ${response.status}`);
+        } catch (healthError) {
+          clearTimeout(timeoutId);
+          console.log('Primary health endpoint failed, trying fallback:', healthError);
+          
+          // Try fallback endpoint
+          try {
+            const controller2 = new AbortController();
+            const timeoutId2 = setTimeout(() => controller2.abort(), 5000);
+            
+            const response = await fetch(fallbackEndpoint, {
+              method: 'GET',
+              headers: { 'Accept': 'application/json' },
+              signal: controller2.signal,
+              mode: 'cors',
+              cache: 'no-cache',
+            });
+            
+            clearTimeout(timeoutId2);
+            
+            if (response.ok) {
+              console.log('API fallback health check succeeded');
+              setApiStatus('online');
+              return;
+            }
+          } catch (fallbackError) {
+            clearTimeout(timeoutId2);
+            console.log('Fallback health endpoint also failed:', fallbackError);
+          }
+        }
+        
+        // If we reach here, both attempts failed
+        setApiStatus('offline');
       } catch (error) {
         console.error('API status check failed:', error);
         setApiStatus('offline');
       }
     };
     
+    // Check immediately on mount
     checkApiStatus();
+    
+    // Re-check every 30 seconds
     const intervalId = setInterval(checkApiStatus, 30000);
     return () => clearInterval(intervalId);
   }, []);

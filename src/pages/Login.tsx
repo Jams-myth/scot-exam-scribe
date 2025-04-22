@@ -84,7 +84,8 @@ const Login = () => {
           <CardTitle>Login to Exam Vault</CardTitle>
         </CardHeader>
         <CardContent>
-          {apiStatus === 'offline' && <ApiStatus status={apiStatus} url={API_URL} />}
+          {/* Show the offline alert only in the card content where it's most visible */}
+          <ApiStatus status={apiStatus} url={API_URL} showAlert={apiStatus === 'offline'} />
           
           <LoginForm
             username={username}
@@ -99,6 +100,7 @@ const Login = () => {
           />
         </CardContent>
         <CardFooter>
+          {/* In footer, just show status without alert */}
           <ApiStatus status={apiStatus} url={API_URL} />
         </CardFooter>
       </Card>

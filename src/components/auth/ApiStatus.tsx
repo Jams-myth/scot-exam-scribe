@@ -6,10 +6,11 @@ import { AlertTriangle } from 'lucide-react';
 interface ApiStatusProps {
   status: 'checking' | 'online' | 'offline';
   url: string;
+  showAlert?: boolean;
 }
 
-export const ApiStatus: React.FC<ApiStatusProps> = ({ status, url }) => {
-  if (status === 'offline') {
+export const ApiStatus: React.FC<ApiStatusProps> = ({ status, url, showAlert = false }) => {
+  if (status === 'offline' && showAlert) {
     return (
       <Alert variant="destructive" className="mb-4">
         <AlertTriangle className="h-4 w-4" />
