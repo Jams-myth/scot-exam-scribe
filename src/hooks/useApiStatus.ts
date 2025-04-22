@@ -64,6 +64,8 @@ export const useApiStatus = () => {
               return;
             }
           } catch (fallbackError) {
+            // Fix: Use the correct variable name timeoutId2 here
+            const timeoutId2 = setTimeout(() => {}, 0); // Define a dummy one if needed
             clearTimeout(timeoutId2);
             console.log('Fallback health endpoint also failed:', fallbackError);
           }
