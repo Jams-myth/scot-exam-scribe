@@ -51,6 +51,12 @@ export const loginUser = async (username: string, password: string) => {
     return data.access_token;
   } catch (error) {
     console.error('Login error:', error);
+    
+    // Provide more context for network errors
+    if (error instanceof TypeError && error.message === 'Failed to fetch') {
+      throw new Error(`Network error: Could not connect to API server at ${API_URL}. Please check your internet connection or if the server is available.`);
+    }
+    
     throw error;
   }
 };

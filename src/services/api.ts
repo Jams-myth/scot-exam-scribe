@@ -1,8 +1,12 @@
-
 import { Paper, ParsedQuestion, UploadResponse, ApiResponse } from "@/types/exam";
 
-// Update API base URL to point to the correct backend
-export const API_URL = "https://exam-vault-api.onrender.com";
+// Update API base URL with a fallback mechanism
+export const API_URL = "https://exam-vault-api-production.up.railway.app";
+
+// Logging function for debugging API calls
+const logApiCall = (method: string, endpoint: string, status?: number, error?: any) => {
+  console.log(`API ${method} ${endpoint} ${status ? `- Status: ${status}` : ''}${error ? ` - Error: ${error}` : ''}`);
+};
 
 export const getAuthToken = () => {
   const token = localStorage.getItem('authToken');
@@ -256,7 +260,11 @@ export const loginUser = async (username: string, password: string) => {
     formData.append('username', username);
     formData.append('password', password);
     
-    const response = await fetch(`${API_URL}/api/v1/auth/login/access-token`, {
+    const loginEndpoint = `${API_URL}/api/v1/auth/login/access-token`;
+    console.log(`Attempting login for user: ${username} to ${loginEndpoint}`);
+    logApiCall('POST', loginEndpoint);
+    
+    const response = await fetch(loginEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -266,17 +274,18 @@ export const loginUser = async (username: string, password: string) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Login error response:', errorText);
+      console.error('Login response error:', response.status, errorText);
+      
       try {
         const errorData = JSON.parse(errorText);
         throw new Error(errorData.message || errorData.detail || 'Login failed');
       } catch (parseError) {
-        throw new Error(`Login failed: ${response.statusText}`);
+        throw new Error(`Login failed (${response.status}): ${response.statusText}`);
       }
     }
 
     const data = await response.json();
-    console.log('Login response:', data);
+    console.log('Login successful, received token');
     
     // Extract the access_token from the response
     if (!data.access_token) {
@@ -286,6 +295,12 @@ export const loginUser = async (username: string, password: string) => {
     return data.access_token;
   } catch (error) {
     console.error('Login error:', error);
+    
+    // Enhanced error message for network issues
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      throw new Error(`Network error: Unable to reach the API server at ${API_URL}. Please check your internet connection or if the server is available.`);
+    }
+    
     throw error;
   }
 };

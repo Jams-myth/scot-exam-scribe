@@ -3,11 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { API_URL } from '@/services/api';
 import { loginUser } from '@/services/auth';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -15,6 +17,8 @@ const Login = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const [showDebug, setShowDebug] = useState(false);
   const [loginInProgress, setLoginInProgress] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -26,7 +30,6 @@ const Login = () => {
 
   useEffect(() => {
     // If already authenticated, redirect to destination path
-    // This includes a check to prevent unnecessary effect runs
     if (isAuthenticated && !isLoading && !loginInProgress) {
       const redirectPath = getRedirectPath();
       console.log('Already authenticated, redirecting to:', redirectPath);
@@ -35,6 +38,25 @@ const Login = () => {
       navigate(redirectPath, { replace: true });
     }
   }, [isAuthenticated, isLoading, navigate, loginInProgress, location.search]);
+  
+  // Check API status on component mount
+  useEffect(() => {
+    const checkApiStatus = async () => {
+      try {
+        setApiStatus('checking');
+        const response = await fetch(`${API_URL}/health`, { 
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+        });
+        setApiStatus(response.ok ? 'online' : 'offline');
+      } catch (error) {
+        console.error('API status check failed:', error);
+        setApiStatus('offline');
+      }
+    };
+    
+    checkApiStatus();
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +64,7 @@ const Login = () => {
     if (loginInProgress) return;
     
     setLoginInProgress(true);
+    setLoginError(null);
     console.log('Login attempt for user:', username);
     
     try {
@@ -60,7 +83,9 @@ const Login = () => {
       
     } catch (error) {
       console.error('Login error:', error);
-      toast.error(error instanceof Error ? error.message : 'Login failed');
+      const errorMessage = error instanceof Error ? error.message : 'Login failed';
+      setLoginError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoginInProgress(false);
     }
@@ -91,6 +116,22 @@ const Login = () => {
           <CardTitle>Login to Exam Vault</CardTitle>
         </CardHeader>
         <CardContent>
+          {apiStatus === 'offline' && (
+            <Alert variant="destructive" className="mb-4">
+              <ExclamationTriangleIcon className="h-4 w-4" />
+              <AlertDescription>
+                API server appears to be offline or unreachable. Login may not work until the server is available.
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {loginError && (
+            <Alert variant="destructive" className="mb-4">
+              <ExclamationTriangleIcon className="h-4 w-4" />
+              <AlertDescription>{loginError}</AlertDescription>
+            </Alert>
+          )}
+          
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label htmlFor="username" className="block mb-2">Username</label>
@@ -100,7 +141,7 @@ const Login = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required 
-                disabled={loginInProgress}
+                disabled={loginInProgress || apiStatus === 'offline'}
               />
             </div>
             <div>
@@ -111,13 +152,13 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required 
-                disabled={loginInProgress}
+                disabled={loginInProgress || apiStatus === 'offline'}
               />
             </div>
             <Button 
               type="submit" 
               className="w-full" 
-              disabled={isLoading || loginInProgress}
+              disabled={isLoading || loginInProgress || apiStatus === 'offline'}
             >
               {loginInProgress ? (
                 <div className="flex items-center justify-center">
@@ -130,6 +171,12 @@ const Login = () => {
             </Button>
           </form>
         </CardContent>
+        <CardFooter>
+          <p className="text-xs text-gray-500 mt-2">
+            API: {apiStatus === 'checking' ? 'Checking...' : apiStatus === 'online' ? 'Online' : 'Offline'} - 
+            {API_URL}
+          </p>
+        </CardFooter>
       </Card>
 
       <div className="flex gap-2 mt-4">
@@ -163,7 +210,8 @@ const Login = () => {
               tokenPreview: localStorage.getItem('authToken') 
                 ? `${localStorage.getItem('authToken')?.substring(0, 20)}...` 
                 : 'none',
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
+              apiStatus
             }, null, 2)}
           </pre>
         </Card>

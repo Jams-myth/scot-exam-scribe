@@ -26,6 +26,7 @@ export const uploadExamPaper = async (file: File, metadata: UploadExamData) => {
 
   try {
     console.log('Uploading exam paper file...');
+    console.log('Using API URL:', API_URL);
     
     // First upload the PDF file
     const formData = new FormData();
@@ -33,7 +34,10 @@ export const uploadExamPaper = async (file: File, metadata: UploadExamData) => {
     formData.append("folder", "exam_papers"); // Optional: organize files in folders
 
     // This endpoint should be implemented in your Supabase function to handle file uploads
-    const uploadResponse = await fetch(`${API_URL}/api/v1/papers/upload-pdf`, {
+    const uploadEndpoint = `${API_URL}/api/v1/papers/upload-pdf`;
+    console.log(`Uploading file to: ${uploadEndpoint}`);
+    
+    const uploadResponse = await fetch(uploadEndpoint, {
       method: "POST",
       headers: {
         'Authorization': authHeader
@@ -43,6 +47,7 @@ export const uploadExamPaper = async (file: File, metadata: UploadExamData) => {
 
     if (!uploadResponse.ok) {
       const errorText = await uploadResponse.text();
+      console.error('Upload response error:', uploadResponse.status, errorText);
       throw new Error(`Failed to upload file: ${errorText}`);
     }
 
