@@ -11,8 +11,9 @@ export const useApiStatus = () => {
         setApiStatus('checking');
         
         // Try multiple endpoints to confirm API status
-        const healthEndpoint = `${API_URL}/health`;
-        const fallbackEndpoint = `${API_URL}/api/v1/health`;
+        const healthEndpoint = `${API_URL}/api/v1/auth/dev-token`;
+        const fallbackEndpoint = `${API_URL}/api/v1/auth/users/me`;
+
         
         console.log(`Checking API status at: ${healthEndpoint}`);
         
