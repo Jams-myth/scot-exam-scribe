@@ -9,7 +9,7 @@ export const useApiStatus = () => {
       try {
         setApiStatus('checking');
         
-        const healthEndpoint = `${API_URL}/api/v1/auth/dev-token`;
+        const healthEndpoint = `${API_URL}/api/v1/health`;
         const fallbackEndpoint = `${API_URL}/api/v1/auth/users/me`;
 
         console.log(`Checking API status at: ${healthEndpoint}`);
