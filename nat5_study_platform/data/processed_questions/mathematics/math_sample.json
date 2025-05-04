@@ -1,0 +1,123 @@
+{
+  "metadata": {
+    "filename": "math_sample",
+    "subject": "mathematics",
+    "year": null,
+    "paper_type": null,
+    "total_marks": null,
+    "title": "(anonymous)",
+    "author": "(anonymous)",
+    "creator": "(unspecified)",
+    "producer": "ReportLab PDF Library - www.reportlab.com"
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "number": "1",
+      "text": "Answer all questions.",
+      "marks": null,
+      "sub_questions": [],
+      "subject": "mathematics",
+      "year": null,
+      "paper_type": null,
+      "question_type": "short_answer"
+    },
+    {
+      "id": "q2",
+      "number": "2",
+      "text": "You may use a calculator.",
+      "marks": null,
+      "sub_questions": [],
+      "subject": "mathematics",
+      "year": null,
+      "paper_type": null,
+      "question_type": "short_answer"
+    },
+    {
+      "id": "q3",
+      "number": "3",
+      "text": "Full credit will\nbe given only to solutions which contain appropriate working.",
+      "marks": null,
+      "sub_questions": [],
+      "subject": "mathematics",
+      "year": null,
+      "paper_type": null,
+      "question_type": "short_answer"
+    },
+    {
+      "id": "q4",
+      "number": "4",
+      "text": "Square-ruled paper is provided for\nrough working.\nQuestion 1\nExpand and simplify (3x + 2)(x - 5).\n\nQuestion 2\nSolve the equation 2x\u00b2 - 5x - 3 =",
+      "marks": 2,
+      "sub_questions": [],
+      "subject": "mathematics",
+      "year": null,
+      "paper_type": null,
+      "question_type": "calculation"
+    },
+    {
+      "id": "q0",
+      "number": "0",
+      "text": "Question 3\nThe gradient of a line is 4 and it passes through the point (2, -3). Find the equation of the line in the\nform y = mx + c.\n\nQuestion 4\nA circle has center (3, 2) and radius 4 units. Determine whether the point (6, 5) lies inside, on, or\noutside the circle.\n\nQuestion 5\nThe volume of a sphere is given by the formula V = (4/3)\u03c0r\u00b3, where r is the radius. If the volume of a\nsphere is 288\u03c0 cm\u00b3, calculate the radius of the sphere.",
+      "marks": 3,
+      "sub_questions": [],
+      "subject": "mathematics",
+      "year": null,
+      "paper_type": null,
+      "question_type": "short_answer"
+    }
+  ],
+  "marking_schemes": [
+    {
+      "id": "ms0",
+      "question_id": "q0",
+      "text": "\u007f Correct application of quadratic formula (1 mark) \u007f Correct substitution of values (1 mark) \u007f Correct\nanswers: x = 3 or x = -0.5 (1 mark)\nQuestion 3 - Marking Scheme\nThe gradient of a line is 4 and it passes through the point (2, -3). Find the equation of the line in the\nform y = mx + c.\n\u007f Correct substitution into y = mx + c (1 mark) \u007f Correct working to find c: -3 = 4(2) + c (1 mark) \u007f\nCorrect final answer: y = 4x - 11 (1 mark)\nQuestion 4 - Marking Scheme\nA circle has center (3, 2) and radius 4 units. Determine whether the point (6, 5) lies inside, on, or\noutside the circle.\n\u007f Correct formula for distance: d = \u221a[(x\u25a0-x\u25a0)\u00b2 + (y\u25a0-y\u25a0)\u00b2] (1 mark) \u007f Correct calculation: d = \u221a[(6-3)\u00b2\n+ (5-2)\u00b2] = \u221a[9 + 9] = \u221a18 = 3\u221a2 (1 mark) \u007f Correct conclusion: Since 3\u221a2 < 4, the point lies inside\nthe circle (1 mark)\nQuestion 5 - Marking Scheme\nThe volume of a sphere is given by the formula V = (4/3)\u03c0r\u00b3, where r is the radius. If the volume of a\nsphere is 288\u03c0 cm\u00b3, calculate the radius of the sphere.\n\u007f Correct substitution: 288\u03c0 = (4/3)\u03c0r\u00b3 (1 mark) \u007f Correct rearrangement: r\u00b3 = 288 \u00d7 3/4 = 216 (1\nmark) \u007f Correct answer: r = 6 cm (1 mark)",
+      "sub_marking_schemes": [
+        {
+          "id": "k",
+          "text": "\u007f Correct substitution of values (1 mar"
+        },
+        {
+          "id": "k",
+          "text": "\u007f Correct\nanswers: x = 3 or x = -0.5 (1 mar"
+        },
+        {
+          "id": "k",
+          "text": "Question 3 - Marking Scheme\nThe gradient of a line is 4 and it passes through the point (2, -3). Find the equation of the line in the\nform y = mx + c.\n\u007f Correct substitution into y = mx + c (1 mar"
+        },
+        {
+          "id": "k",
+          "text": "\u007f Correct working to find c: -3 = 4(2) + c (1 mar"
+        },
+        {
+          "id": "k",
+          "text": "\u007f\nCorrect final answer: y = 4x - 11 (1 mar"
+        },
+        {
+          "id": "k",
+          "text": "Question 4 - Marking Scheme\nA circle has center (3, 2) and radius 4 units. Determine whether the point (6, 5) lies inside, on, or\noutside the circle.\n\u007f Correct formula for distance: d = \u221a[(x\u25a0-x\u25a0)\u00b2 + (y\u25a0-y\u25a0)\u00b2] (1 mar"
+        },
+        {
+          "id": "k",
+          "text": "\u007f Correct calculation: d = \u221a[(6-3)\u00b2\n+ (5-2)\u00b2] = \u221a[9 + 9] = \u221a18 = 3\u221a2 (1 mar"
+        },
+        {
+          "id": "k",
+          "text": "\u007f Correct conclusion: Since 3\u221a2 < 4, the point lies inside\nthe circle (1 mar"
+        },
+        {
+          "id": "k",
+          "text": "Question 5 - Marking Scheme\nThe volume of a sphere is given by the formula V = (4/3)\u03c0r\u00b3, where r is the radius. If the volume of a\nsphere is 288\u03c0 cm\u00b3, calculate the radius of the sphere.\n\u007f Correct substitution: 288\u03c0 = (4/3)\u03c0r\u00b3 (1 mar"
+        },
+        {
+          "id": "k",
+          "text": "\u007f Correct rearrangement: r\u00b3 = 288 \u00d7 3/4 = 216 (1\nmar"
+        },
+        {
+          "id": "k",
+          "text": "\u007f Correct answer: r = 6 cm (1 mark)"
+        }
+      ]
+    }
+  ]
+}

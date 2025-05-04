@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}{{ subject.name }} - Nat5 Study Platform{% endblock %}
+
+{% block content %}
+<section class="subject-header">
+    <h1>{{ subject.name }}</h1>
+    <p>Practice questions for the {{ subject.name }} National 5 exam.</p>
+</section>
+
+<section class="topics-section">
+    <h2>Topics</h2>
+    <div class="topics-grid">
+        {% for topic in subject.topics %}
+        <div class="topic-card">
+            <h3>{{ topic }}</h3>
+            <p>{{ questions_by_topic[topic]|length }} questions available</p>
+            <a href="{{ url_for('topic', subject_id=subject_id, topic_id=topic) }}" class="btn">Practice</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="recent-questions">
+    <h2>Recent Questions</h2>
+    <div class="questions-list">
+        {% set displayed_questions = [] %}
+        {% for topic, questions in questions_by_topic.items() %}
+            {% for question in questions %}
+                {% if question.id not in displayed_questions and displayed_questions|length < 5 %}
+                    {% set _ = displayed_questions.append(question.id) %}
+                    <div class="question-card">
+                        <h3>Question {{ question.number }}</h3>
+                        <p class="question-text">{{ question.text|truncate(100) }}</p>
+                        <div class="question-meta">
+                            <span class="question-marks">{{ question.marks }} marks</span>
+                            <span class="question-type">{{ question.question_type }}</span>
+                        </div>
+                        <a href="{{ url_for('question', question_id=question.id) }}" class="btn">Practice</a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        
+        {% if displayed_questions|length == 0 %}
+            <p class="no-questions">No questions available for this subject yet. <a href="{{ url_for('upload') }}">Upload</a> some exam papers to get started.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

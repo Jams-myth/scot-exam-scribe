@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}{{ topic_name }} - {{ subject.name }} - Nat5 Study Platform{% endblock %}
+
+{% block content %}
+<section class="topic-header">
+    <h1>{{ topic_name }}</h1>
+    <p>{{ subject.name }} - National 5</p>
+</section>
+
+<section class="questions-section">
+    <h2>Questions</h2>
+    <div class="questions-list">
+        {% if questions %}
+            {% for question in questions %}
+                <div class="question-card">
+                    <h3>Question {{ question.number }}</h3>
+                    <p class="question-text">{{ question.text|truncate(150) }}</p>
+                    <div class="question-meta">
+                        <span class="question-marks">{{ question.marks }} marks</span>
+                        <span class="question-type">{{ question.question_type }}</span>
+                        {% if question.year %}
+                            <span class="question-year">{{ question.year }}</span>
+                        {% endif %}
+                    </div>
+                    <a href="{{ url_for('question', question_id=question.id) }}" class="btn">Practice</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-questions">No questions available for this topic yet. <a href="{{ url_for('upload') }}">Upload</a> some exam papers to get started.</p>
+        {% endif %}
+    </div>
+</section>
+
+<section class="topic-navigation">
+    <a href="{{ url_for('subject', subject_id=subject_id) }}" class="btn">Back to {{ subject.name }}</a>
+</section>
+{% endblock %}

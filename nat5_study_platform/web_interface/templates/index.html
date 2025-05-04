@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Nat5 Study Platform{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>Welcome to the Nat5 Study Platform</h1>
+        <p>Your comprehensive study support platform for Scottish National 5 exam preparation.</p>
+        <a href="{{ url_for('subjects') }}" class="btn">Get Started</a>
+    </div>
+</section>
+
+<section class="features">
+    <h2>Core Features</h2>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3>Interactive Questions</h3>
+            <p>Practice with interactive questions extracted from official SQA Nat5 exam papers.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Instant Feedback</h3>
+            <p>Receive detailed feedback on your answers based on official marking schemes.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Progressive Hints</h3>
+            <p>Get help when you need it with progressive hints that guide you to the answer.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Track Progress</h3>
+            <p>Monitor your progress and focus on areas that need improvement.</p>
+        </div>
+    </div>
+</section>
+
+<section class="subjects-preview">
+    <h2>Available Subjects</h2>
+    <div class="subject-grid">
+        {% for subject_id, subject in subjects.items() %}
+        <div class="subject-card">
+            <h3>{{ subject.name }}</h3>
+            <p>{{ subject.topics|length }} topics available</p>
+            <a href="{{ url_for('subject', subject_id=subject_id) }}" class="btn">Study Now</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

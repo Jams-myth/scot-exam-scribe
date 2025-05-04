@@ -1,0 +1,56 @@
+[
+  {
+    "id": "ms0",
+    "question_id": "q0",
+    "text": "\u007f Correct application of quadratic formula (1 mark) \u007f Correct substitution of values (1 mark) \u007f Correct\nanswers: x = 3 or x = -0.5 (1 mark)\nQuestion 3 - Marking Scheme\nThe gradient of a line is 4 and it passes through the point (2, -3). Find the equation of the line in the\nform y = mx + c.\n\u007f Correct substitution into y = mx + c (1 mark) \u007f Correct working to find c: -3 = 4(2) + c (1 mark) \u007f\nCorrect final answer: y = 4x - 11 (1 mark)\nQuestion 4 - Marking Scheme\nA circle has center (3, 2) and radius 4 units. Determine whether the point (6, 5) lies inside, on, or\noutside the circle.\n\u007f Correct formula for distance: d = \u221a[(x\u25a0-x\u25a0)\u00b2 + (y\u25a0-y\u25a0)\u00b2] (1 mark) \u007f Correct calculation: d = \u221a[(6-3)\u00b2\n+ (5-2)\u00b2] = \u221a[9 + 9] = \u221a18 = 3\u221a2 (1 mark) \u007f Correct conclusion: Since 3\u221a2 < 4, the point lies inside\nthe circle (1 mark)\nQuestion 5 - Marking Scheme\nThe volume of a sphere is given by the formula V = (4/3)\u03c0r\u00b3, where r is the radius. If the volume of a\nsphere is 288\u03c0 cm\u00b3, calculate the radius of the sphere.\n\u007f Correct substitution: 288\u03c0 = (4/3)\u03c0r\u00b3 (1 mark) \u007f Correct rearrangement: r\u00b3 = 288 \u00d7 3/4 = 216 (1\nmark) \u007f Correct answer: r = 6 cm (1 mark)",
+    "criteria": [],
+    "sub_marking_schemes": [],
+    "created_at": "2025-05-04T14:55:14.769591",
+    "updated_at": "2025-05-04T14:55:14.769598"
+  },
+  {
+    "id": "ms_math_2024_p1_q1",
+    "question_id": "math_2024_p1_q1",
+    "text": "3x\u00b2 - 15x + 2x - 10 = 3x\u00b2 - 13x - 10 (2 marks)\nCorrect expansion: 1 mark\nCorrect simplification: 1 mark",
+    "criteria": [],
+    "sub_marking_schemes": [],
+    "created_at": "2025-05-04T14:55:14.772410",
+    "updated_at": "2025-05-04T14:55:14.772415"
+  },
+  {
+    "id": "ms_math_2024_p1_q2",
+    "question_id": "math_2024_p1_q2",
+    "text": "6x\u00b2 - 15x = 3x(2x - 5) (2 marks)\nCommon factor of 3x: 1 mark\nCorrect factorisation: 1 mark",
+    "criteria": [],
+    "sub_marking_schemes": [],
+    "created_at": "2025-05-04T14:55:14.772616",
+    "updated_at": "2025-05-04T14:55:14.772620"
+  },
+  {
+    "id": "ms_math_2024_p1_q3",
+    "question_id": "math_2024_p1_q3",
+    "text": "4(2x - 3) = 3(x + 5)\n8x - 12 = 3x + 15\n8x - 3x = 15 + 12\n5x = 27\nx = 5.4 (3 marks)\nCorrect expansion: 1 mark\nCorrect collection of terms: 1 mark\nCorrect solution: 1 mark",
+    "criteria": [],
+    "sub_marking_schemes": [],
+    "created_at": "2025-05-04T14:55:14.773069",
+    "updated_at": "2025-05-04T14:55:14.773073"
+  },
+  {
+    "id": "ms_math_2024_p1_q4",
+    "question_id": "math_2024_p1_q4",
+    "text": "Area = \u03c0r\u00b2\nArea = \u03c0 \u00d7 7\u00b2\nArea = \u03c0 \u00d7 49\nArea = 153.9 cm\u00b2 (2 marks)\nCorrect substitution: 1 mark\nCorrect answer with units: 1 mark",
+    "criteria": [],
+    "sub_marking_schemes": [],
+    "created_at": "2025-05-04T14:55:14.773458",
+    "updated_at": "2025-05-04T14:55:14.773462"
+  },
+  {
+    "id": "ms_math_2024_p1_q5",
+    "question_id": "math_2024_p1_q5",
+    "text": "Midpoint = ((x\u2081 + x\u2082)/2, (y\u2081 + y\u2082)/2)\nMidpoint = ((3 + 7)/2, (-2 + 6)/2)\nMidpoint = (5, 2) (2 marks)\nCorrect method: 1 mark\nCorrect coordinates: 1 mark",
+    "criteria": [],
+    "sub_marking_schemes": [],
+    "created_at": "2025-05-04T14:55:14.773818",
+    "updated_at": "2025-05-04T14:55:14.773822"
+  }
+]

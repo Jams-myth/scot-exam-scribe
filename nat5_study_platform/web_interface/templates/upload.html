@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Upload - Nat5 Study Platform{% endblock %}
+
+{% block content %}
+<section class="upload-header">
+    <h1>Upload Exam Papers</h1>
+    <p>Upload official SQA Nat5 exam papers to extract questions and marking schemes.</p>
+</section>
+
+<section class="upload-form">
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="subject">Subject</label>
+            <select name="subject" id="subject" required>
+                <option value="">Select a subject</option>
+                {% for subject_id, subject in subjects.items() %}
+                <option value="{{ subject_id }}">{{ subject.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="file">Exam Paper (PDF)</label>
+            <input type="file" name="file" id="file" accept=".pdf" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="year">Year (optional)</label>
+            <input type="number" name="year" id="year" min="2000" max="2025">
+        </div>
+        
+        <div class="form-group">
+            <label for="paper_type">Paper Type (optional)</label>
+            <select name="paper_type" id="paper_type">
+                <option value="">Select a paper type</option>
+                <option value="paper1">Paper 1</option>
+                <option value="paper2">Paper 2</option>
+                <option value="specimen">Specimen</option>
+                <option value="marking_scheme">Marking Scheme</option>
+            </select>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn">Upload and Process</button>
+        </div>
+    </form>
+</section>
+
+<section class="upload-instructions">
+    <h2>Instructions</h2>
+    <ol>
+        <li>Select the subject for the exam paper.</li>
+        <li>Choose the PDF file to upload.</li>
+        <li>Optionally, specify the year and paper type for better organization.</li>
+        <li>Click "Upload and Process" to extract questions and marking schemes.</li>
+    </ol>
+    <p>Note: Processing may take a few moments depending on the size and complexity of the PDF.</p>
+</section>
+{% endblock %}

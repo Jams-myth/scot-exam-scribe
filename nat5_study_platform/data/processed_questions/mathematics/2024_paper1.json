@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "subject": "Mathematics",
+    "year": 2024,
+    "paper_type": "Paper 1 (Non-Calculator)",
+    "source": "SQA National 5 Mathematics"
+  },
+  "questions": [
+    {
+      "id": "math_2024_p1_q1",
+      "number": 1,
+      "text": "Expand and simplify (3x + 2)(x - 5).",
+      "marks": 2,
+      "question_type": "calculation",
+      "topic_id": "algebra",
+      "sub_questions": []
+    },
+    {
+      "id": "math_2024_p1_q2",
+      "number": 2,
+      "text": "Factorise completely 6x² - 15x.",
+      "marks": 2,
+      "question_type": "calculation",
+      "topic_id": "algebra",
+      "sub_questions": []
+    },
+    {
+      "id": "math_2024_p1_q3",
+      "number": 3,
+      "text": "Solve the equation 4(2x - 3) = 3(x + 5).",
+      "marks": 3,
+      "question_type": "calculation",
+      "topic_id": "algebra",
+      "sub_questions": []
+    },
+    {
+      "id": "math_2024_p1_q4",
+      "number": 4,
+      "text": "Calculate the area of a circle with radius 7 cm. Give your answer to 1 decimal place.",
+      "marks": 2,
+      "question_type": "calculation",
+      "topic_id": "geometry",
+      "sub_questions": []
+    },
+    {
+      "id": "math_2024_p1_q5",
+      "number": 5,
+      "text": "Find the coordinates of the midpoint of the line joining the points (3, -2) and (7, 6).",
+      "marks": 2,
+      "question_type": "calculation",
+      "topic_id": "geometry",
+      "sub_questions": []
+    }
+  ],
+  "marking_schemes": [
+    {
+      "id": "ms_math_2024_p1_q1",
+      "question_id": "math_2024_p1_q1",
+      "text": "3x² - 15x + 2x - 10 = 3x² - 13x - 10 (2 marks)\nCorrect expansion: 1 mark\nCorrect simplification: 1 mark"
+    },
+    {
+      "id": "ms_math_2024_p1_q2",
+      "question_id": "math_2024_p1_q2",
+      "text": "6x² - 15x = 3x(2x - 5) (2 marks)\nCommon factor of 3x: 1 mark\nCorrect factorisation: 1 mark"
+    },
+    {
+      "id": "ms_math_2024_p1_q3",
+      "question_id": "math_2024_p1_q3",
+      "text": "4(2x - 3) = 3(x + 5)\n8x - 12 = 3x + 15\n8x - 3x = 15 + 12\n5x = 27\nx = 5.4 (3 marks)\nCorrect expansion: 1 mark\nCorrect collection of terms: 1 mark\nCorrect solution: 1 mark"
+    },
+    {
+      "id": "ms_math_2024_p1_q4",
+      "question_id": "math_2024_p1_q4",
+      "text": "Area = πr²\nArea = π × 7²\nArea = π × 49\nArea = 153.9 cm² (2 marks)\nCorrect substitution: 1 mark\nCorrect answer with units: 1 mark"
+    },
+    {
+      "id": "ms_math_2024_p1_q5",
+      "question_id": "math_2024_p1_q5",
+      "text": "Midpoint = ((x₁ + x₂)/2, (y₁ + y₂)/2)\nMidpoint = ((3 + 7)/2, (-2 + 6)/2)\nMidpoint = (5, 2) (2 marks)\nCorrect method: 1 mark\nCorrect coordinates: 1 mark"
+    }
+  ]
+}

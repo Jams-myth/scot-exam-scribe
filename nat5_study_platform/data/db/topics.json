@@ -1,0 +1,122 @@
+[
+  {
+    "id": "algebra",
+    "name": "Algebra",
+    "description": "Algebraic expressions, equations, and functions.",
+    "subject_id": "mathematics",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  },
+  {
+    "id": "geometry",
+    "name": "Geometry",
+    "description": "Properties of shapes, coordinate geometry, and vectors.",
+    "subject_id": "mathematics",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  },
+  {
+    "id": "trigonometry",
+    "name": "Trigonometry",
+    "description": "Trigonometric ratios, equations, and applications.",
+    "subject_id": "mathematics",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  },
+  {
+    "id": "statistics",
+    "name": "Statistics",
+    "description": "Data analysis, probability, and statistical measures.",
+    "subject_id": "mathematics",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  },
+  {
+    "id": "number",
+    "name": "Number",
+    "description": "Number systems, operations, and properties.",
+    "subject_id": "mathematics",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  },
+  {
+    "id": "calculus",
+    "name": "Calculus",
+    "description": "Differentiation and integration.",
+    "subject_id": "mathematics",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  },
+  {
+    "id": "reading",
+    "name": "Reading for Understanding, Analysis and Evaluation",
+    "description": "Comprehension, analysis, and evaluation of texts.",
+    "subject_id": "english",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  },
+  {
+    "id": "critical_reading",
+    "name": "Critical Reading",
+    "description": "Analysis and evaluation of literary texts.",
+    "subject_id": "english",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  },
+  {
+    "id": "writing",
+    "name": "Writing",
+    "description": "Creative and discursive writing.",
+    "subject_id": "english",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  },
+  {
+    "id": "dynamics",
+    "name": "Dynamics",
+    "description": "Motion, forces, and energy.",
+    "subject_id": "physics",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  },
+  {
+    "id": "space",
+    "name": "Space",
+    "description": "Cosmology, space exploration, and the solar system.",
+    "subject_id": "physics",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  },
+  {
+    "id": "electricity",
+    "name": "Electricity",
+    "description": "Electric circuits, components, and electrical energy.",
+    "subject_id": "physics",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  },
+  {
+    "id": "properties_of_matter",
+    "name": "Properties of Matter",
+    "description": "States of matter, heat, and gas laws.",
+    "subject_id": "physics",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  },
+  {
+    "id": "waves",
+    "name": "Waves",
+    "description": "Wave properties, sound, and light.",
+    "subject_id": "physics",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  },
+  {
+    "id": "radiation",
+    "name": "Radiation",
+    "description": "Nuclear radiation, half-life, and applications.",
+    "subject_id": "physics",
+    "created_at": "2025-05-04T14:00:00",
+    "updated_at": "2025-05-04T14:00:00"
+  }
+]

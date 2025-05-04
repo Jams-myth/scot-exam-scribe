@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}About - Nat5 Study Platform{% endblock %}
+
+{% block content %}
+<section class="about-header">
+    <h1>About Nat5 Study Platform</h1>
+    <p>A comprehensive study support platform for Scottish National 5 exam preparation.</p>
+</section>
+
+<section class="about-content">
+    <div class="about-section">
+        <h2>Our Mission</h2>
+        <p>The Nat5 Study Platform is designed to help students prepare effectively for their Scottish National 5 exams by providing access to interactive practice questions extracted from official SQA exam papers.</p>
+        <p>Our goal is to make exam preparation more engaging, effective, and accessible for all students.</p>
+    </div>
+    
+    <div class="about-section">
+        <h2>Core Features</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>PDF Content Extraction</h3>
+                <p>We parse SQA Nat5 exam PDFs to extract questions, mark allocations, and marking guidelines, maintaining the hierarchical structure of exam papers.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Interactive Question Conversion</h3>
+                <p>We transform extracted questions into interactive digital formats, preserving the original difficulty level and assessment criteria.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Assessment Engine</h3>
+                <p>Our system evaluates student responses based on official SQA marking guidelines, providing specific feedback on incorrect or partially correct answers.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Learning Support</h3>
+                <p>We implement help buttons for each question that provide progressive hints, subject-specific guidance, and step-by-step solution paths for complex problems.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="about-section">
+        <h2>How It Works</h2>
+        <ol>
+            <li><strong>Upload Exam Papers:</strong> Users can upload official SQA Nat5 exam papers in PDF format.</li>
+            <li><strong>Extract Questions:</strong> Our system extracts questions, mark allocations, and marking schemes from the PDFs.</li>
+            <li><strong>Practice Questions:</strong> Students can practice with interactive versions of the extracted questions.</li>
+            <li><strong>Receive Feedback:</strong> Students receive immediate feedback on their answers based on official marking schemes.</li>
+            <li><strong>Track Progress:</strong> The system tracks student progress and identifies areas for improvement.</li>
+        </ol>
+    </div>
+    
+    <div class="about-section">
+        <h2>Available Subjects</h2>
+        <ul class="subjects-list">
+            {% for subject_id, subject in subjects.items() %}
+            <li><a href="{{ url_for('subject', subject_id=subject_id) }}">{{ subject.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="about-section">
+        <h2>Contact Us</h2>
+        <p>If you have any questions, suggestions, or feedback, please contact us at:</p>
+        <p><a href="mailto:contact@nat5studyplatform.com">contact@nat5studyplatform.com</a></p>
+    </div>
+</section>
+{% endblock %}

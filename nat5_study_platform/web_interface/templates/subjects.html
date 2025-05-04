@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Subjects - Nat5 Study Platform{% endblock %}
+
+{% block content %}
+<section class="subjects-header">
+    <h1>Available Subjects</h1>
+    <p>Choose a subject to start practicing with questions from official SQA Nat5 exam papers.</p>
+</section>
+
+<section class="subjects-list">
+    <div class="subject-grid">
+        {% for subject_id, subject in subjects.items() %}
+        <div class="subject-card">
+            <h2>{{ subject.name }}</h2>
+            <p>{{ subject.topics|length }} topics available</p>
+            <div class="topics-list">
+                <h3>Topics:</h3>
+                <ul>
+                    {% for topic in subject.topics %}
+                    <li><a href="{{ url_for('topic', subject_id=subject_id, topic_id=topic) }}">{{ topic }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <a href="{{ url_for('subject', subject_id=subject_id) }}" class="btn">Study Now</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,306 @@
+2025-05-04 14:40:20,913 - __main__ - INFO - Starting Nat5 Study Platform...
+2025-05-04 14:40:20,913 - __main__ - INFO - Setting up environment...
+2025-05-04 14:40:21,053 - __main__ - ERROR - Missing required package: No module named 'pdf2image'
+2025-05-04 14:40:21,053 - __main__ - INFO - Installing required packages...
+2025-05-04 14:40:55,775 - __main__ - INFO - NLTK data downloaded successfully.
+2025-05-04 14:40:59,097 - __main__ - INFO - spaCy model downloaded successfully.
+2025-05-04 14:40:59,098 - __main__ - INFO - Environment setup complete.
+2025-05-04 14:40:59,424 - nat5_study_platform.question_database.database - INFO - Connected to MongoDB at localhost:27017
+2025-05-04 14:40:59,429 - __main__ - INFO - Starting web server on 0.0.0.0:12000...
+2025-05-04 14:40:59,432 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:12000
+ * Running on http://10.2.30.142:12000
+2025-05-04 14:40:59,432 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-04 14:41:01,141 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:01] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:04,377 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:04] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:07,535 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:07] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:10,714 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:10] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:13,885 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:13] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:17,064 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:17] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:20,238 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:20] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:23,416 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:23] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:26,782 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:26] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:29,966 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:29] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:33,133 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:33] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:36,363 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:36] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:39,599 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:39] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:42,819 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:42] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:46,038 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:46] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:49,214 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:49] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:52,367 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:52] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:55,562 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:55] "GET / HTTP/1.1" 200 -
+2025-05-04 14:41:58,764 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:41:58] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:01,914 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:01] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:05,059 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:05] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:08,267 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:08] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:11,440 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:11] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:14,611 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:14] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:17,777 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:17] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:20,933 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:20] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:24,132 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:24] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:26,429 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:42:26] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:26,455 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:42:26] "GET /static/css/main.css HTTP/1.1" 200 -
+2025-05-04 14:42:26,455 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:42:26] "GET /static/js/main.js HTTP/1.1" 200 -
+2025-05-04 14:42:27,313 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:27] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:30,484 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:30] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:31,505 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:42:31] "GET /subjects HTTP/1.1" 200 -
+2025-05-04 14:42:31,521 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:42:31] "[36mGET /static/css/main.css HTTP/1.1[0m" 304 -
+2025-05-04 14:42:31,523 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:42:31] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-05-04 14:42:33,658 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:33] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:36,846 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:36] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:40,014 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:40] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:43,179 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:43] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:46,176 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:42:46] "GET /upload HTTP/1.1" 200 -
+2025-05-04 14:42:46,198 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:42:46] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-05-04 14:42:46,199 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:42:46] "[36mGET /static/css/main.css HTTP/1.1[0m" 304 -
+2025-05-04 14:42:46,374 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:46] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:49,545 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:49] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:52,750 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:52] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:55,931 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:55] "GET / HTTP/1.1" 200 -
+2025-05-04 14:42:59,148 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:42:59] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:02,332 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:02] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:06,549 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:06] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:10,199 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:10] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:13,359 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:13] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:15,984 - nat5_study_platform.web_interface.app - ERROR - Exception on /about [GET]
+Traceback (most recent call last):
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/nat5_study_platform/web_interface/routes.py", line 169, in about
+    return render_template('about.html')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/jinja2/environment.py", line 1301, in render
+    self.environment.handle_exception()
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/jinja2/environment.py", line 936, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/workspace/nat5_study_platform/web_interface/templates/about.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/workspace/nat5_study_platform/web_interface/templates/base.html", line 26, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/nat5_study_platform/web_interface/templates/about.html", line 54, in block 'content'
+    {% for subject_id, subject in subjects.items() %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/jinja2/environment.py", line 485, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'subjects' is undefined
+2025-05-04 14:43:15,985 - nat5_study_platform.web_interface.app - ERROR - Server error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2025-05-04 14:43:15,987 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:43:15] "[35m[1mGET /about HTTP/1.1[0m" 500 -
+2025-05-04 14:43:16,017 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:43:16] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-05-04 14:43:16,017 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:43:16] "[36mGET /static/css/main.css HTTP/1.1[0m" 304 -
+2025-05-04 14:43:16,508 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:16] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:19,695 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:19] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:22,842 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:22] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:25,982 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:25] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:29,158 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:29] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:32,332 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:32] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:35,499 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:35] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:37,505 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:43:37] "GET /subjects HTTP/1.1" 200 -
+2025-05-04 14:43:37,606 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:43:37] "[36mGET /static/css/main.css HTTP/1.1[0m" 304 -
+2025-05-04 14:43:37,607 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:43:37] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-05-04 14:43:38,693 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:38] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:41,958 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:41] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:45,125 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:45] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:47,180 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:43:47] "GET /upload HTTP/1.1" 200 -
+2025-05-04 14:43:47,200 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:43:47] "[36mGET /static/css/main.css HTTP/1.1[0m" 304 -
+2025-05-04 14:43:47,201 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:43:47] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-05-04 14:43:48,322 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:48] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:51,505 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:51] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:54,805 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:54] "GET / HTTP/1.1" 200 -
+2025-05-04 14:43:58,027 - werkzeug - INFO - 10.2.62.139 - - [04/May/2025 14:43:58] "GET / HTTP/1.1" 200 -
+2025-05-04 14:45:14,876 - __main__ - INFO - Starting Nat5 Study Platform...
+2025-05-04 14:45:14,876 - __main__ - INFO - Setting up environment...
+2025-05-04 14:45:16,368 - __main__ - INFO - All required packages are installed.
+2025-05-04 14:45:16,499 - __main__ - INFO - NLTK data downloaded successfully.
+2025-05-04 14:45:18,854 - __main__ - INFO - spaCy model downloaded successfully.
+2025-05-04 14:45:18,854 - __main__ - INFO - Environment setup complete.
+2025-05-04 14:45:19,004 - nat5_study_platform.question_database.database - INFO - Connected to MongoDB at localhost:27017
+2025-05-04 14:45:19,009 - __main__ - INFO - Starting web server on 0.0.0.0:12000...
+2025-05-04 14:45:19,013 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:12000
+ * Running on http://10.2.30.142:12000
+2025-05-04 14:45:19,013 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-04 14:45:33,594 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:45:33] "GET /about HTTP/1.1" 200 -
+2025-05-04 14:45:33,679 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:45:33] "[36mGET /static/css/main.css HTTP/1.1[0m" 304 -
+2025-05-04 14:45:33,680 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:45:33] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-05-04 14:45:44,863 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:45:44] "GET /upload HTTP/1.1" 200 -
+2025-05-04 14:45:44,876 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:45:44] "[36mGET /static/css/main.css HTTP/1.1[0m" 304 -
+2025-05-04 14:45:44,876 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:45:44] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-05-04 14:46:42,322 - nat5_study_platform.pdf_processor.extractor - INFO - Extracting content from /workspace/nat5_study_platform/data/raw_pdfs/math_sample.pdf
+2025-05-04 14:46:42,328 - nat5_study_platform.pdf_processor.extractor - INFO - Converting PDF to images with DPI=300
+2025-05-04 14:46:42,330 - nat5_study_platform.web_interface.routes - ERROR - Error processing PDF: Unable to get page count. Is poppler installed and in PATH?
+2025-05-04 14:46:42,330 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:46:42] "[32mPOST /upload HTTP/1.1[0m" 302 -
+2025-05-04 14:46:42,338 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:46:42] "GET /upload HTTP/1.1" 200 -
+2025-05-04 14:46:42,356 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:46:42] "[36mGET /static/css/main.css HTTP/1.1[0m" 304 -
+2025-05-04 14:46:42,357 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:46:42] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-05-04 14:47:22,203 - nat5_study_platform.pdf_processor.extractor - INFO - Extracting content from /workspace/nat5_study_platform/data/raw_pdfs/math_sample.pdf
+2025-05-04 14:47:22,208 - nat5_study_platform.pdf_processor.extractor - INFO - Converting PDF to images with DPI=300
+2025-05-04 14:47:22,209 - nat5_study_platform.web_interface.routes - ERROR - Error processing PDF: Unable to get page count. Is poppler installed and in PATH?
+2025-05-04 14:47:22,210 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:47:22] "[32mPOST /upload HTTP/1.1[0m" 302 -
+2025-05-04 14:47:22,242 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:47:22] "GET /upload HTTP/1.1" 200 -
+2025-05-04 14:47:22,259 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:47:22] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-05-04 14:47:22,259 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:47:22] "[36mGET /static/css/main.css HTTP/1.1[0m" 304 -
+2025-05-04 14:47:44,633 - nat5_study_platform.pdf_processor.extractor - INFO - Extracting content from /workspace/nat5_study_platform/data/raw_pdfs/math_sample.pdf
+2025-05-04 14:47:44,639 - nat5_study_platform.pdf_processor.extractor - INFO - Converting PDF to images with DPI=300
+2025-05-04 14:47:44,640 - nat5_study_platform.web_interface.routes - ERROR - Error processing PDF: Unable to get page count. Is poppler installed and in PATH?
+2025-05-04 14:47:44,641 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:47:44] "[32mPOST /upload HTTP/1.1[0m" 302 -
+2025-05-04 14:47:44,647 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:47:44] "GET /upload HTTP/1.1" 200 -
+2025-05-04 14:47:44,659 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:47:44] "[36mGET /static/css/main.css HTTP/1.1[0m" 304 -
+2025-05-04 14:47:44,661 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:47:44] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-05-04 14:48:58,155 - __main__ - INFO - Starting Nat5 Study Platform...
+2025-05-04 14:48:58,155 - __main__ - INFO - Setting up environment...
+2025-05-04 14:48:59,592 - __main__ - INFO - All required packages are installed.
+2025-05-04 14:48:59,725 - __main__ - INFO - NLTK data downloaded successfully.
+2025-05-04 14:49:01,949 - __main__ - INFO - spaCy model downloaded successfully.
+2025-05-04 14:49:01,949 - __main__ - INFO - Environment setup complete.
+2025-05-04 14:49:02,100 - nat5_study_platform.question_database.database - INFO - Connected to MongoDB at localhost:27017
+2025-05-04 14:49:02,105 - __main__ - INFO - Starting web server on 0.0.0.0:12000...
+2025-05-04 14:49:02,108 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:12000
+ * Running on http://10.2.30.142:12000
+2025-05-04 14:49:02,109 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-04 14:49:16,364 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:49:16] "GET /upload HTTP/1.1" 200 -
+2025-05-04 14:49:16,384 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:49:16] "[36mGET /static/css/main.css HTTP/1.1[0m" 304 -
+2025-05-04 14:49:16,385 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:49:16] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-05-04 14:49:20,205 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:49:20] "GET / HTTP/1.1" 200 -
+2025-05-04 14:49:23,366 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:49:23] "GET / HTTP/1.1" 200 -
+2025-05-04 14:49:26,516 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:49:26] "GET / HTTP/1.1" 200 -
+2025-05-04 14:49:29,754 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:49:29] "GET / HTTP/1.1" 200 -
+2025-05-04 14:49:32,983 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:49:32] "GET / HTTP/1.1" 200 -
+2025-05-04 14:49:36,153 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:49:36] "GET / HTTP/1.1" 200 -
+2025-05-04 14:49:39,306 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:49:39] "GET / HTTP/1.1" 200 -
+2025-05-04 14:49:42,507 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:49:42] "GET / HTTP/1.1" 200 -
+2025-05-04 14:49:45,684 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:49:45] "GET / HTTP/1.1" 200 -
+2025-05-04 14:49:48,852 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:49:48] "GET / HTTP/1.1" 200 -
+2025-05-04 14:49:51,989 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:49:51] "GET / HTTP/1.1" 200 -
+2025-05-04 14:49:55,203 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:49:55] "GET / HTTP/1.1" 200 -
+2025-05-04 14:49:58,362 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:49:58] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:01,604 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:01] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:04,882 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:04] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:07,962 - nat5_study_platform.pdf_processor.extractor - INFO - Extracting content from /workspace/nat5_study_platform/data/raw_pdfs/math_sample.pdf
+2025-05-04 14:50:07,967 - nat5_study_platform.pdf_processor.extractor - INFO - Extracting text directly from PDF
+2025-05-04 14:50:07,968 - nat5_study_platform.pdf_processor.extractor - INFO - PDF has 2 pages
+2025-05-04 14:50:07,968 - nat5_study_platform.pdf_processor.extractor - INFO - Processing page 1/2
+2025-05-04 14:50:07,972 - nat5_study_platform.pdf_processor.extractor - INFO - Processing page 2/2
+2025-05-04 14:50:07,975 - nat5_study_platform.pdf_processor.extractor - INFO - Extracting questions and marking schemes
+2025-05-04 14:50:07,976 - nat5_study_platform.pdf_processor.extractor - INFO - Extracted content saved to /workspace/nat5_study_platform/data/processed_questions/mathematics/math_sample.json
+2025-05-04 14:50:07,977 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:50:07] "[32mPOST /upload HTTP/1.1[0m" 302 -
+2025-05-04 14:50:08,081 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:08] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:11,282 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:11] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:14,465 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:14] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:17,642 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:17] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:20,824 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:20] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:24,146 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:24] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:27,348 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:27] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:30,603 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:30] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:33,883 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:33] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:37,184 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:37] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:38,156 - nat5_study_platform.web_interface.app - ERROR - Exception on /subject/mathematics [GET]
+Traceback (most recent call last):
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/nat5_study_platform/web_interface/routes.py", line 50, in subject
+    questions = db.get_by_field(Question, 'subject_id', subject_id)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/nat5_study_platform/question_database/database.py", line 199, in get_by_field
+    return [model_class.from_dict(doc) for doc in docs]
+                                                  ^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/pymongo/cursor.py", line 1262, in next
+    if len(self.__data) or self._refresh():
+                           ^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/pymongo/cursor.py", line 1153, in _refresh
+    self.__session = self.__collection.database.client._ensure_session()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/pymongo/mongo_client.py", line 1868, in _ensure_session
+    return self.__start_session(True, causal_consistency=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/pymongo/mongo_client.py", line 1811, in __start_session
+    self._topology._check_implicit_session_support()
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/pymongo/topology.py", line 583, in _check_implicit_session_support
+    self._check_session_support()
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/pymongo/topology.py", line 599, in _check_session_support
+    self._select_servers_loop(
+  File "/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/pymongo/topology.py", line 269, in _select_servers_loop
+    raise ServerSelectionTimeoutError(
+pymongo.errors.ServerSelectionTimeoutError: localhost:27017: [Errno 111] Connection refused, Timeout: 30s, Topology Description: <TopologyDescription id: 68177e5eadd2d7ffe9ef3299, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [Errno 111] Connection refused')>]>
+2025-05-04 14:50:38,158 - nat5_study_platform.web_interface.app - ERROR - Server error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2025-05-04 14:50:38,160 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:50:38] "[35m[1mGET /subject/mathematics HTTP/1.1[0m" 500 -
+2025-05-04 14:50:38,179 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:50:38] "[36mGET /static/css/main.css HTTP/1.1[0m" 304 -
+2025-05-04 14:50:38,181 - werkzeug - INFO - 10.2.65.139 - - [04/May/2025 14:50:38] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-05-04 14:50:40,359 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:40] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:43,538 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:43] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:46,710 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:46] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:49,858 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:49] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:53,054 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:53] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:56,230 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:56] "GET / HTTP/1.1" 200 -
+2025-05-04 14:50:59,411 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:50:59] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:02,581 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:02] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:05,897 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:05] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:09,131 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:09] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:12,324 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:12] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:15,476 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:15] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:18,658 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:18] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:21,830 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:21] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:25,067 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:25] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:28,296 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:28] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:31,529 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:31] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:34,825 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:34] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:38,012 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:38] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:41,178 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:41] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:44,357 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:44] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:47,528 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:47] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:50,714 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:50] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:53,879 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:53] "GET / HTTP/1.1" 200 -
+2025-05-04 14:51:57,061 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:51:57] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:00,224 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:00] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:03,426 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:03] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:06,588 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:06] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:09,749 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:09] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:12,928 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:12] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:16,071 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:16] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:19,274 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:19] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:22,458 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:22] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:25,629 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:25] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:28,811 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:28] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:31,992 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:31] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:35,144 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:35] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:38,320 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:38] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:41,618 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:41] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:44,771 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:44] "GET / HTTP/1.1" 200 -
+2025-05-04 14:52:47,947 - werkzeug - INFO - 10.2.9.24 - - [04/May/2025 14:52:47] "GET / HTTP/1.1" 200 -

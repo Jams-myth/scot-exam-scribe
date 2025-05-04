@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Question - {{ subject.name }} - Nat5 Study Platform{% endblock %}
+
+{% block content %}
+<section class="question-header">
+    <div class="breadcrumbs">
+        <a href="{{ url_for('subject', subject_id=subject_id) }}">{{ subject.name }}</a>
+        {% if question.topic_ids %}
+            &gt; <a href="{{ url_for('topic', subject_id=subject_id, topic_id=question.topic_ids[0]) }}">{{ question.topic_ids[0] }}</a>
+        {% endif %}
+    </div>
+    <h1>Question {{ question.number }}</h1>
+    <div class="question-meta">
+        <span class="question-marks">{{ question.marks }} marks</span>
+        <span class="question-type">{{ question.question_type }}</span>
+        {% if question.year %}
+            <span class="question-year">{{ question.year }}</span>
+        {% endif %}
+    </div>
+</section>
+
+<section class="question-content">
+    <div class="question-text">
+        {{ question.text|safe }}
+    </div>
+    
+    {% if question.sub_questions %}
+        <div class="sub-questions">
+            {% for sub_question in question.sub_questions %}
+                <div class="sub-question" id="sub-question-{{ sub_question.id }}">
+                    <h3>{{ sub_question.id }}) {{ sub_question.text }}</h3>
+                    <div class="sub-question-meta">
+                        <span class="question-marks">{{ sub_question.marks }} marks</span>
+                    </div>
+                    
+                    <form class="question-form" data-question-id="{{ question.id }}" data-sub-question-id="{{ sub_question.id }}">
+                        {% if sub_question.question_type == "multiple_choice" %}
+                            <div class="multiple-choice-options">
+                                <label><input type="radio" name="answer" value="A"> A</label>
+                                <label><input type="radio" name="answer" value="B"> B</label>
+                                <label><input type="radio" name="answer" value="C"> C</label>
+                                <label><input type="radio" name="answer" value="D"> D</label>
+                                <label><input type="radio" name="answer" value="E"> E</label>
+                            </div>
+                        {% elif sub_question.question_type == "calculation" or sub_question.question_type == "short_answer" %}
+                            <textarea name="answer" rows="3" placeholder="Enter your answer here..."></textarea>
+                        {% elif sub_question.question_type == "essay" %}
+                            <textarea name="answer" rows="10" placeholder="Enter your answer here..."></textarea>
+                        {% else %}
+                            <textarea name="answer" rows="5" placeholder="Enter your answer here..."></textarea>
+                        {% endif %}
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn">Submit Answer</button>
+                            <button type="button" class="btn hint-button" data-question-id="{{ question.id }}" data-sub-question-id="{{ sub_question.id }}" data-hint-level="0">Hint</button>
+                        </div>
+                    </form>
+                    
+                    <div class="hint-display hidden"></div>
+                    <div class="feedback-display hidden"></div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <form class="question-form" data-question-id="{{ question.id }}">
+            {% if question.question_type == "multiple_choice" %}
+                <div class="multiple-choice-options">
+                    <label><input type="radio" name="answer" value="A"> A</label>
+                    <label><input type="radio" name="answer" value="B"> B</label>
+                    <label><input type="radio" name="answer" value="C"> C</label>
+                    <label><input type="radio" name="answer" value="D"> D</label>
+                    <label><input type="radio" name="answer" value="E"> E</label>
+                </div>
+            {% elif question.question_type == "calculation" or question.question_type == "short_answer" %}
+                <textarea name="answer" rows="3" placeholder="Enter your answer here..."></textarea>
+            {% elif question.question_type == "essay" %}
+                <textarea name="answer" rows="10" placeholder="Enter your answer here..."></textarea>
+            {% else %}
+                <textarea name="answer" rows="5" placeholder="Enter your answer here..."></textarea>
+            {% endif %}
+            
+            <div class="form-actions">
+                <button type="submit" class="btn">Submit Answer</button>
+                <button type="button" class="btn hint-button" data-question-id="{{ question.id }}" data-hint-level="0">Hint</button>
+            </div>
+        </form>
+        
+        <div class="hint-display hidden"></div>
+        <div class="feedback-display hidden"></div>
+    {% endif %}
+</section>
+
+<section class="question-navigation">
+    <a href="{{ url_for('subject', subject_id=subject_id) }}" class="btn">Back to {{ subject.name }}</a>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add custom scripts for this page if needed
+    });
+</script>
+{% endblock %}
